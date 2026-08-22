@@ -19,6 +19,10 @@ a través de un modelo `Item`, una vista de listado y un panel administrativo.
 - [Instalación](#️-instalación)
 - [Puesta en marcha](#️-puesta-en-marcha)
 - [Modelo Item](#-modelo-item)
+- [Reto opcional](#-reto-opcional)
+- [Implementaciones avanzadas asistidas por IA](#-implementaciones-avanzadas-asistidas-por-ia-agente-claude--vs-code)
+- [Resultados de la implementación con el Agente de IA](#-resultados-de-la-implementación-con-el-agente-de-ia)
+- [Documentación y publicación del proyecto](#-documentación-y-publicación-del-proyecto)
 
 ## 🧩 Requisitos y stack técnico
 
@@ -59,14 +63,15 @@ django_project/
     │
     └── core/                    # Aplicación principal del catálogo
         ├── models.py             # Modelo Item
-        ├── views.py               # Vista item_list
-        ├── urls.py                 # Rutas del catálogo
+        ├── views.py               # item_list, item_list_api, api_demo
+        ├── urls.py                 # Rutas del catálogo y de la API
         ├── admin.py                 # Registro de Item en el admin
         ├── migrations/               # Migraciones de la base de datos
         └── templates/
-            ├── base.html             # Estructura base, navegación y footer
+            ├── base.html             # Estructura base, estilos CSS y navegación
             └── core/
-                └── item_list.html      # Listado de ítems (for / empty)
+                ├── item_list.html      # Catálogo con tarjetas y buscador JS
+                └── api_demo.html         # Página de demostración de la API
 ```
 
 ## ⚙️ Instalación
@@ -116,10 +121,12 @@ python manage.py runserver
 
 **4. Abrir la aplicación en el navegador**
 
-| Ruta | URL |
-|---|---|
-| Catálogo Principal (Inicio) | http://127.0.0.1:8000/ |
-| Panel Administrativo | http://127.0.0.1:8000/admin/ |
+| Ruta | URL | Descripción |
+|---|---|---|
+| Catálogo principal | http://127.0.0.1:8000/ | Listado de ítems con buscador en tiempo real |
+| API de ítems | http://127.0.0.1:8000/api/items/ | Ítems en formato JSON, ordenados por fecha de creación |
+| Demo de la API | http://127.0.0.1:8000/api-demo/ | Consume la API con `fetch` y muestra el resultado |
+| Panel administrativo | http://127.0.0.1:8000/admin/ | Alta, edición y borrado de ítems |
 
 ## 📦 Modelo Item
 
@@ -133,3 +140,40 @@ python manage.py runserver
 
 - No usar `DEBUG = True` en producción.
 - No subir la carpeta `venv/`, `db.sqlite3` ni ningún secreto/credencial al repositorio.
+
+## 🌟 Reto opcional
+
+Además de los ejercicios obligatorios, se completaron las tres funcionalidades complementarias
+propuestas como reto:
+
+- ✅ Estilos CSS agregados a la plantilla base para mejorar la presentación del catálogo.
+- ✅ Buscador interactivo en JavaScript que filtra los ítems sin recargar la página.
+- ✅ Endpoint de API para el modelo `Item`, consumido desde un frontend con HTML, CSS y
+  JavaScript vanilla.
+
+## 🤖 Implementaciones avanzadas asistidas por IA (Agente Claude / VS Code)
+
+A partir de este punto, el desarrollo de las funcionalidades complementarias (estilos CSS,
+buscador interactivo en JavaScript y creación/consumo de la API REST) se realizó utilizando
+un agente de Inteligencia Artificial (Claude, integrado como extensión en Visual Studio Code).
+Se redactaron e ingresaron instrucciones detalladas para la generación automatizada y
+optimizada del código, revisando y probando cada cambio directamente sobre el proyecto antes
+de aceptarlo.
+
+## ✅ Resultados de la implementación con el Agente de IA
+
+1. **Estilos CSS**: se integró un diseño limpio basado en tarjetas (*cards*), sombras suaves y
+   una tipografía moderna para la presentación del catálogo de productos.
+2. **Interactividad (JavaScript)**: se añadió una barra de búsqueda en tiempo real que filtra
+   las tarjetas de los ítems en el navegador sin necesidad de recargar la página.
+3. **Consumo de API REST**: se habilitó la ruta `/api/items/` para devolver los ítems en
+   formato JSON, junto con el enlace **"Demo API"** en la cabecera del sitio, que consume esos
+   datos mediante `fetch` en la página `/api-demo/`.
+
+## 📚 Documentación y publicación del proyecto
+
+En este paso final se generó el archivo `requirements.txt` para congelar las dependencias
+instaladas en el entorno virtual. Luego se redactó este `README.md` detallando las
+tecnologías usadas, la estructura del proyecto y los pasos de instalación y ejecución.
+Finalmente, se inicializó el repositorio local con Git y se subió todo el código fuente a un
+repositorio público en GitHub.

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Demo API — Ítems{% endblock %}
+
+{% block content %}
+<h2>Demo de consumo de la API</h2>
+<p>
+    Esta página consulta <code>/api/items/</code> con <code>fetch</code> desde JavaScript
+    y muestra la respuesta JSON tal como la entrega el servidor.
+</p>
+
+<button id="btn-cargar" class="search-bar" style="cursor:pointer; width:auto; padding:0.6rem 1.2rem;">
+    Cargar ítems desde la API
+</button>
+
+<div id="resultado-api" style="margin-top:1rem;">
+    <p class="empty-state">Presiona el botón para consultar la API.</p>
+</div>
+
+<script>
+    (function () {
+        const boton = document.getElementById('btn-cargar');
+        const contenedor = document.getElementById('resultado-api');
+
+        boton.addEventListener('click', function () {
+            contenedor.innerHTML = '<p class="empty-state">Cargando...</p>';
+
+            fetch("{% url 'item_list_api' %}")
+                .then(function (respuesta) {
+                    if (!respuesta.ok) {
+                        throw new Error('Error HTTP ' + respuesta.status);
+                    }
+                    return respuesta.json();
+                })
+                .then(function (items) {
+                    if (items.length === 0) {
+                        contenedor.innerHTML = '<p class="empty-state">La API no devolvió ítems.</p>';
+                        return;
+                    }
+
+                    const grid = document.createElement('div');
+                    grid.className = 'items-grid';
+
+                    items.forEach(function (item) {
+                        const tarjeta = document.createElement('div');
+                        tarjeta.className = 'item-card';
+                        tarjeta.innerHTML =
+                            '<h3>' + item.name + '</h3>' +
+                            '<p>' + (item.description || '<em>Sin descripción</em>') + '</p>' +
+                            '<small>Creado: ' + item.created_at + '</small>';
+                        grid.appendChild(tarjeta);
+                    });
+
+                    const json = document.createElement('pre');
+                    json.className = 'api-output';
+                    json.textContent = JSON.stringify(items, null, 2);
+
+                    contenedor.innerHTML = '';
+                    contenedor.appendChild(grid);
+                    contenedor.appendChild(json);
+                })
+                .catch(function (error) {
+                    contenedor.innerHTML = '<p class="empty-state">Ocurrió un error al consumir la API: ' + error.message + '</p>';
+                });
+        });
+    })();
+</script>
+{% endblock %}

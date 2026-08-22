@@ -1,22 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}Listado de Items{% endblock %}
+{% block title %}Catálogo de Ítems{% endblock %}
 
 {% block content %}
-<h2>Listado de Items</h2>
+<h2>Catálogo de Ítems</h2>
 
-{% for item in items %}
-    <div class="item">
-        <h3>{{ item.name }}</h3>
-        {% if item.description %}
-            <p>{{ item.description }}</p>
-        {% else %}
-            <p><em>Sin descripción</em></p>
-        {% endif %}
-        <small>Creado: {{ item.created_at }}</small>
-    </div>
-{% empty %}
-    <p>No hay items para mostrar.</p>
-{% endfor %}
+<input
+    type="text"
+    id="buscador"
+    class="search-bar"
+    placeholder="Buscar por nombre o descripción..."
+    autocomplete="off"
+>
 
+<div class="items-grid" id="items-grid">
+    {% for item in items %}
+        <div class="item-card" data-name="{{ item.name|lower }}" data-description="{{ item.description|default:''|lower }}">
+            <h3>{{ item.name }}</h3>
+            {% if item.description %}
+                <p>{{ item.description }}</p>
+            {% else %}
+                <p><em>Sin descripción</em></p>
+            {% endif %}
+            <small>Creado: {{ item.created_at }}</small>
+        </div>
+    {% empty %}
+        <p class="empty-state">No hay items para mostrar.</p>
+    {% endfor %}
+</div>
+
+<p class="empty-state" id="sin-resultados" style="display:none;">No se encontraron ítems que coincidan con la búsqueda.</p>
+
+<script>
+    (function () {
+        const buscador = document.getElementById('buscador');
+        const tarjetas = document.querySelectorAll('#items-grid .item-card');
+        const sinResultados = document.getElementById('sin-resultados');
+
+        buscador.addEventListener('input', function () {
+            const termino = buscador.value.trim().toLowerCase();
+            let visibles = 0;
+
+            tarjetas.forEach(function (tarjeta) {
+                const coincide = tarjeta.dataset.name.includes(termino) ||
+                    tarjeta.dataset.description.includes(termino);
+                tarjeta.style.display = coincide ? '' : 'none';
+                if (coincide) visibles++;
+            });
+
+            sinResultados.style.display = (visibles === 0 && tarjetas.length > 0) ? '' : 'none';
+        });
+    })();
+</script>
 {% endblock %}
