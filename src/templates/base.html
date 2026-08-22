@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Mi Aplicación{% endblock %}</title>
+    <style>
+        /* Estilo sencillo, fácil de explicar */
+        body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+        header { background: #2c3e50; color: white; padding: 1rem; }
+        main { padding: 1rem; max-width: 900px; margin: 1rem auto; background: white; border-radius: 6px; }
+        footer { text-align: center; font-size: 0.9rem; color: #666; padding: 1rem; }
+        a { color: #3498db; text-decoration: none; }
+        .item { border-bottom: 1px solid #eee; padding: 0.75rem 0; }
+        .item:last-child { border-bottom: none; }
+        h1 { margin: 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;">
+            <h1>Mi Aplicación Django</h1>
+            <nav>
+                <a href="/">Inicio</a> |
+                <a href="/admin/">Admin</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        &copy; {% now "Y" %} - Proyecto de laboratorio
+    </footer>
+</body>
+</html>

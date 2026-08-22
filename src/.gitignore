@@ -1,0 +1,23 @@
+# Entorno virtual
+.venv/
+venv/
+ENV/
+env/
+
+# Byte-compiled / caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de datos
+db.sqlite3
+
+# Django staticfiles build (si aplica)
+staticfiles/
+
+# VS Code settings
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
