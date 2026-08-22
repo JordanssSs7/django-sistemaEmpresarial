@@ -1,26 +1,28 @@
-# 📌 Sistema Empresarial — Catálogo de Ítems en Django
+# 🏢 Sistema Empresarial — Gestión de Ítems con Django
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite&logoColor=white)
 ![License](https://img.shields.io/badge/uso-académico-lightgrey)
 
-Proyecto de laboratorio desarrollado para el curso **Desarrollo de Aplicaciones Empresariales**
-(tema: Clases, atributos y métodos). Es la primera versión de un sistema empresarial que
-gestiona un catálogo simple de ítems (productos), usando arquitectura **MVT** de Django:
-modelo `Item`, vista de listado y panel de administración.
+Laboratorio del curso **Desarrollo de Aplicaciones Empresariales** — unidad de *Clases,
+atributos y métodos*. Implementa la primera versión de un sistema empresarial capaz de
+registrar y listar un catálogo de ítems (productos), aplicando el patrón **MVT** de Django
+a través de un modelo `Item`, una vista de listado y un panel administrativo.
+
+> Autor: **Jordan Reyes** · Repositorio del laboratorio, no afiliado a otros proyectos similares.
 
 ## Índice
 
-- [Tecnologías y prerrequisitos](#️-tecnologías-y-prerrequisitos)
-- [Estructura del proyecto](#-estructura-del-proyecto)
+- [Requisitos y stack técnico](#-requisitos-y-stack-técnico)
+- [Organización de carpetas](#️-organización-de-carpetas)
 - [Instalación](#️-instalación)
-- [Ejecución](#-ejecución)
+- [Puesta en marcha](#️-puesta-en-marcha)
 - [Modelo Item](#-modelo-item)
 
-## 🛠️ Tecnologías y prerrequisitos
+## 🧩 Requisitos y stack técnico
 
-**Prerrequisitos**
+**Antes de empezar necesitas**
 
 | Herramienta | Notas |
 |---|---|
@@ -28,7 +30,7 @@ modelo `Item`, vista de listado y panel de administración.
 | Git | Para control de versiones |
 | Visual Studio Code | Editor recomendado |
 
-**Stack utilizado**
+**Con qué está construido**
 
 | Capa | Tecnología |
 |---|---|
@@ -36,7 +38,7 @@ modelo `Item`, vista de listado y panel de administración.
 | Frontend | HTML5 & CSS3 |
 | Base de datos | SQLite3 |
 
-## 📁 Estructura del proyecto
+## 🗂️ Organización de carpetas
 
 ```text
 django_project/
@@ -91,7 +93,7 @@ pip install --upgrade pip
 pip install -r src/requirements.txt
 ```
 
-## 🚀 Ejecución
+## ▶️ Puesta en marcha
 
 **1. Aplicar las migraciones de la base de datos**
 
