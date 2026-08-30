@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Citas médicas{% endblock %}
+
+{% block content %}
+<h2>Listado de citas médicas</h2>
+
+<div class="toolbar">
+    <a class="chip {% if not estado_activo %}active{% endif %}"
+       href="{% url 'semana2_listado' %}">Todas</a>
+    {% for estado in estados %}
+    <a class="chip {% if estado_activo == estado %}active{% endif %}"
+       href="{% url 'semana2_listado' %}?estado={{ estado }}">{{ estado }}</a>
+    {% endfor %}
+
+    <span class="spacer"></span>
+
+    <span class="count-badge">Total: {{ total }}</span>
+    <a class="btn btn-primary" href="{% url 'semana2_crear' %}">+ Nueva cita</a>
+</div>
+
+<div class="table-wrap">
+    <table class="citas">
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Documento</th>
+                <th>Médico</th>
+                <th>Especialidad</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Consultorio</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Costo est.</th>
+                <th>Motivo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr class="{% if cita.prioritaria %}prioritaria{% endif %}">
+                <td>{{ cita.paciente }}</td>
+                <td>{{ cita.documento }}</td>
+                <td>{{ cita.medico }}</td>
+                <td>{{ cita.especialidad }}</td>
+                <td>{{ cita.fecha|date:"d/m/Y" }}</td>
+                <td>{{ cita.hora|time:"H:i" }}</td>
+                <td>{{ cita.consultorio }}</td>
+                <td>
+                    <span class="badge badge-{{ cita.estado|lower }}">{{ cita.estado }}</span>
+                </td>
+                <td>
+                    {% if cita.prioritaria %}
+                        <span class="badge badge-prioridad">&#9888; Prioritaria</span>
+                    {% else %}
+                        &mdash;
+                    {% endif %}
+                </td>
+                <td>S/ {{ cita.costo_estimado }}</td>
+                <td>{{ cita.observaciones|default:"—" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="11" class="empty-state">No hay citas para el filtro seleccionado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

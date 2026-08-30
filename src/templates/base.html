@@ -84,6 +84,77 @@
             background: #0f172a; color: #e2e8f0; padding: 1rem;
             border-radius: 8px; overflow-x: auto; font-size: 0.85rem;
         }
+
+        /* Mensajes de confirmación */
+        .messages { list-style: none; padding: 0; margin: 0 0 1.25rem; }
+        .messages li {
+            padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem;
+            background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
+        }
+
+        /* Barra de filtros y resumen del listado */
+        .toolbar {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .toolbar .spacer { flex: 1; }
+        .chip {
+            display: inline-block; padding: 0.35rem 0.8rem; border-radius: 999px;
+            font-size: 0.85rem; text-decoration: none;
+            background: var(--surface); border: 1px solid var(--border); color: #374151;
+        }
+        .chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .count-badge {
+            background: var(--primary); color: white; border-radius: 999px;
+            padding: 0.35rem 0.8rem; font-size: 0.85rem; font-weight: 600;
+        }
+
+        /* Tabla de citas */
+        .table-wrap { overflow-x: auto; }
+        table.citas {
+            width: 100%; border-collapse: collapse; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+            box-shadow: var(--shadow); font-size: 0.9rem;
+        }
+        table.citas th, table.citas td {
+            padding: 0.7rem 0.9rem; text-align: left; border-bottom: 1px solid var(--border);
+        }
+        table.citas th { background: #f8fafc; color: var(--primary); font-weight: 600; }
+        table.citas tr:last-child td { border-bottom: none; }
+        tr.prioritaria { background: #fff7ed; }
+
+        /* Etiquetas de estado y prioridad */
+        .badge {
+            display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+            font-size: 0.78rem; font-weight: 600;
+        }
+        .badge-programada { background: #dbeafe; color: #1e40af; }
+        .badge-atendida   { background: #dcfce7; color: #166534; }
+        .badge-cancelada  { background: #fee2e2; color: #991b1b; }
+        .badge-prioridad  { background: #f59e0b; color: #1f2937; }
+
+        /* Botones y formulario */
+        .btn {
+            display: inline-block; padding: 0.6rem 1.1rem; border-radius: 8px;
+            font-size: 0.92rem; text-decoration: none; border: none; cursor: pointer;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-secondary { background: var(--surface); color: #374151; border: 1px solid var(--border); }
+        .form-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1.5rem; box-shadow: var(--shadow);
+            max-width: 560px;
+        }
+        .form-card p { margin: 0 0 1rem; }
+        .form-card label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: var(--primary); }
+        .form-card input[type="text"], .form-card input[type="date"],
+        .form-card input[type="time"], .form-card select, .form-card textarea {
+            width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 0.95rem; font-family: inherit;
+        }
+        .form-card .helptext { color: var(--text-muted); font-size: 0.82rem; }
+        .form-card .errorlist { color: #991b1b; font-size: 0.85rem; list-style: none; padding: 0; margin: 0.3rem 0 0; }
+        .form-actions { display: flex; gap: 0.6rem; margin-top: 1rem; }
     </style>
 </head>
 <body>
@@ -93,12 +164,19 @@
             <nav>
                 <a href="{% url 'item_list' %}">Inicio</a>
                 <a href="{% url 'api_demo' %}">Demo API</a>
-                <a href="{% url 'semana2_index' %}">Semana 2</a>
+                <a href="{% url 'semana2_listado' %}">Citas médicas</a>
                 <a href="/admin/">Admin</a>
             </nav>
         </div>
     </header>
     <main>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
     <footer>
