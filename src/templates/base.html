@@ -154,7 +154,30 @@
         }
         .form-card .helptext { color: var(--text-muted); font-size: 0.82rem; }
         .form-card .errorlist { color: #991b1b; font-size: 0.85rem; list-style: none; padding: 0; margin: 0.3rem 0 0; }
-        .form-actions { display: flex; gap: 0.6rem; margin-top: 1rem; }
+        .form-actions { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
+        ul.errorlist { color: #991b1b; font-size: 0.9rem; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.8rem 1.2rem; margin: 0 0 1rem; }
+        .detail-card p { margin: 0 0 0.6rem; }
+
+        /* Barra de filtros del listado */
+        .filter-bar {
+            display: flex; flex-wrap: wrap; align-items: end; gap: 1rem;
+            margin-bottom: 1rem; padding: 0.9rem 1rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; box-shadow: var(--shadow);
+        }
+        .filter-bar label {
+            display: flex; flex-direction: column; gap: 0.3rem;
+            font-size: 0.82rem; color: var(--text-muted); font-weight: 600;
+        }
+        .filter-bar select, .filter-bar input[type="date"] {
+            padding: 0.45rem 0.6rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.9rem; font-family: inherit;
+        }
+
+        /* Botones pequeños y formularios inline dentro de una celda */
+        .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.82rem; }
+        .acciones { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+        .inline-form { display: inline-block; margin: 0; }
     </style>
 </head>
 <body>
@@ -162,10 +185,10 @@
         <div class="header-inner">
             <h1>Sistema Empresarial</h1>
             <nav>
-                <a href="{% url 'item_list' %}">Inicio</a>
-                <a href="{% url 'api_demo' %}">Demo API</a>
                 <a href="{% url 'semana2_listado' %}">Citas médicas</a>
-                <a href="/admin/">Admin</a>
+                <a href="{% url 'semana2_profesionales' %}">Profesionales</a>
+                <a href="{% url 'semana2_horarios' %}">Horarios</a>
+                <a href="{% url 'item_list' %}">Semana 1 (otro proyecto)</a>
             </nav>
         </div>
     </header>

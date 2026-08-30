@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de cita{% endblock %}
+
+{% block content %}
+<h2>Detalle de la cita</h2>
+
+<div class="form-card detail-card">
+    <p><strong>Paciente:</strong> {{ cita.paciente }}</p>
+    <p><strong>Documento:</strong> {{ cita.documento }}</p>
+    <p><strong>Profesional:</strong> {{ profesional.nombre }} ({{ profesional.especialidad }})</p>
+    <p><strong>Fecha:</strong> {{ cita.fecha|date:"d/m/Y" }} ({{ cita.fecha|date:"l" }})</p>
+    <p><strong>Hora:</strong> {{ cita.hora|time:"H:i" }}</p>
+    <p><strong>Consultorio:</strong> {{ cita.consultorio }}</p>
+    <p><strong>Estado:</strong> <span class="badge badge-{{ cita.estado|lower }}">{{ cita.estado }}</span></p>
+    <p><strong>Atención prioritaria:</strong> {% if cita.prioritaria %}Sí{% else %}No{% endif %}</p>
+    <p><strong>Costo estimado:</strong> S/ {{ cita.costo_estimado }}</p>
+    <p><strong>Observaciones:</strong> {{ cita.observaciones|default:"—" }}</p>
+    <p><strong>Agendado el:</strong> {{ cita.agendado_en|date:"d/m/Y H:i" }}</p>
+
+    <div class="form-actions">
+        {% if cita.estado == "Programada" %}
+        <form method="post" action="{% url 'semana2_actualizar_estado' cita.id %}" class="inline-form">
+            {% csrf_token %}
+            <input type="hidden" name="estado" value="Atendida">
+            <button type="submit" class="btn btn-primary">Marcar como atendida</button>
+        </form>
+        <form method="post" action="{% url 'semana2_actualizar_estado' cita.id %}" class="inline-form">
+            {% csrf_token %}
+            <input type="hidden" name="estado" value="Cancelada">
+            <button type="submit" class="btn btn-secondary">Cancelar cita</button>
+        </form>
+        {% endif %}
+        <a href="{% url 'semana2_listado' %}" class="btn btn-secondary">Volver al listado</a>
+    </div>
+</div>
+{% endblock %}

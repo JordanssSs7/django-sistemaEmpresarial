@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Profesionales{% endblock %}
+
+{% block content %}
+<h2>Profesionales de la salud</h2>
+
+<div class="toolbar">
+    <span class="spacer"></span>
+    <span class="count-badge">Total: {{ profesionales|length }}</span>
+    <a class="btn btn-primary" href="{% url 'semana2_crear_profesional' %}">+ Nuevo profesional</a>
+</div>
+
+<div class="table-wrap">
+    <table class="citas">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Especialidad</th>
+                <th>Disponibilidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for profesional in profesionales %}
+            <tr>
+                <td>{{ profesional.nombre }}</td>
+                <td>{{ profesional.especialidad }}</td>
+                <td>
+                    {% if profesional.disponible %}
+                    <span class="badge badge-atendida">Disponible</span>
+                    {% else %}
+                    <span class="badge badge-cancelada">No disponible</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="empty-state">No hay profesionales registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

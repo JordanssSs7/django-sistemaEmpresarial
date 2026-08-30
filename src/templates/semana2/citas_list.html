@@ -19,13 +19,50 @@
     <a class="btn btn-primary" href="{% url 'semana2_crear' %}">+ Nueva cita</a>
 </div>
 
+<form method="get" class="filter-bar">
+    <input type="hidden" name="estado" value="{{ estado_activo }}">
+
+    <label>
+        Profesional
+        <select name="profesional" onchange="this.form.submit()">
+            <option value="">Todos</option>
+            {% for profesional in profesionales %}
+            <option value="{{ profesional.id }}" {% if profesional_activo == profesional.id|stringformat:"s" %}selected{% endif %}>
+                {{ profesional.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Especialidad
+        <select name="especialidad" onchange="this.form.submit()">
+            <option value="">Todas</option>
+            {% for especialidad in especialidades %}
+            <option value="{{ especialidad.nombre }}" {% if especialidad_activa == especialidad.nombre %}selected{% endif %}>
+                {{ especialidad.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>
+        Fecha
+        <input type="date" name="fecha" value="{{ fecha_activa }}" onchange="this.form.submit()">
+    </label>
+
+    {% if profesional_activo or especialidad_activa or fecha_activa %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'semana2_listado' %}?estado={{ estado_activo }}">Limpiar filtros</a>
+    {% endif %}
+</form>
+
 <div class="table-wrap">
     <table class="citas">
         <thead>
             <tr>
                 <th>Paciente</th>
                 <th>Documento</th>
-                <th>Médico</th>
+                <th>Profesional</th>
                 <th>Especialidad</th>
                 <th>Fecha</th>
                 <th>Hora</th>
@@ -33,7 +70,7 @@
                 <th>Estado</th>
                 <th>Prioridad</th>
                 <th>Costo est.</th>
-                <th>Motivo</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -41,7 +78,7 @@
             <tr class="{% if cita.prioritaria %}prioritaria{% endif %}">
                 <td>{{ cita.paciente }}</td>
                 <td>{{ cita.documento }}</td>
-                <td>{{ cita.medico }}</td>
+                <td>{{ cita.profesional_nombre }}</td>
                 <td>{{ cita.especialidad }}</td>
                 <td>{{ cita.fecha|date:"d/m/Y" }}</td>
                 <td>{{ cita.hora|time:"H:i" }}</td>
@@ -57,7 +94,21 @@
                     {% endif %}
                 </td>
                 <td>S/ {{ cita.costo_estimado }}</td>
-                <td>{{ cita.observaciones|default:"—" }}</td>
+                <td class="acciones">
+                    <a class="btn btn-secondary btn-sm" href="{% url 'semana2_detalle' cita.id %}">Ver</a>
+                    {% if cita.estado == "Programada" %}
+                    <form method="post" action="{% url 'semana2_actualizar_estado' cita.id %}" class="inline-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="estado" value="Atendida">
+                        <button type="submit" class="btn btn-primary btn-sm">Atender</button>
+                    </form>
+                    <form method="post" action="{% url 'semana2_actualizar_estado' cita.id %}" class="inline-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="estado" value="Cancelada">
+                        <button type="submit" class="btn btn-secondary btn-sm">Cancelar</button>
+                    </form>
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
             <tr>
