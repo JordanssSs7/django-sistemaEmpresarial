@@ -3,8 +3,6 @@
 App Django **sin base de datos**: los datos viven en listas de `models.py`. Conectada al mismo
 Project (`config`) que `semana1`, en su propio espacio de rutas.
 
-> Autor: **Jhoselin**
-
 ## 1. Problemática
 
 En clínicas comunitarias, las citas se asignan por teléfono o presencialmente sin un registro
