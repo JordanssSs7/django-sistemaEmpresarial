@@ -33,7 +33,10 @@
             <td>S/ {{ pension.monto_final }}</td>
             <td>{{ pension.fecha_vencimiento|date:"d/m/Y" }}</td>
             <td>{{ pension.get_estado_pago_display }}</td>
-            <td><a href="{% url 'semana3:pension_editar' pension.id %}">Editar</a></td>
+            <td>
+                <a href="{% url 'semana3:pension_editar' pension.id %}">Editar</a> ·
+                <a href="{% url 'semana3:pension_eliminar' pension.id %}">Eliminar</a>
+            </td>
         </tr>
         {% empty %}
         <tr><td colspan="9" class="empty-state">Sin registros.</td></tr>

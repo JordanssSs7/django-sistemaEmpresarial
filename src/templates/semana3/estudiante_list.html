@@ -50,7 +50,10 @@
             <td>{{ estudiante.fecha_nacimiento|date:"d/m/Y" }}</td>
             <td>{{ estudiante.get_estado_display }}</td>
             <td>{{ estudiante.apoderado.nombres }} {{ estudiante.apoderado.apellidos }}</td>
-            <td><a href="{% url 'semana3:estudiante_editar' estudiante.id %}">Editar</a></td>
+            <td>
+                <a href="{% url 'semana3:estudiante_editar' estudiante.id %}">Editar</a> ·
+                <a href="{% url 'semana3:estudiante_eliminar' estudiante.id %}">Eliminar</a>
+            </td>
         </tr>
         {% empty %}
         <tr><td colspan="9" class="empty-state">Sin registros.</td></tr>

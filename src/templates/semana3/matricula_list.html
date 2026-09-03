@@ -42,7 +42,10 @@
             <td>S/ {{ matricula.costo_matricula }}</td>
             <td>{{ matricula.get_estado_matricula_display }}</td>
             <td>{{ matricula.fecha_registro|date:"d/m/Y H:i" }}</td>
-            <td><a href="{% url 'semana3:matricula_editar' matricula.id %}">Editar</a></td>
+            <td>
+                <a href="{% url 'semana3:matricula_editar' matricula.id %}">Editar</a> ·
+                <a href="{% url 'semana3:matricula_eliminar' matricula.id %}">Eliminar</a>
+            </td>
         </tr>
         {% empty %}
         <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>

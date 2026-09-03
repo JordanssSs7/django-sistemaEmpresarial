@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (
@@ -51,6 +52,25 @@ def _calcular_monto_final(pension):
         factor = Decimal("1") - (pension.tipo_descuento.porcentaje / Decimal("100"))
         return (pension.monto_base * factor).quantize(Decimal("0.01"))
     return pension.monto_base
+
+
+def _eliminar(request, objeto, ruta_lista, nombre):
+    """Flujo común de DELETE: GET muestra confirmación, POST ejecuta delete()."""
+    if request.method == "POST":
+        try:
+            objeto.delete()  # DELETE
+            messages.success(request, f"{nombre} eliminado correctamente.")
+        except ProtectedError:
+            messages.error(
+                request,
+                f"No se puede eliminar: {nombre.lower()} tiene registros asociados.",
+            )
+        return redirect(ruta_lista)
+    return render(request, "semana3/confirm_delete.html", {
+        "objeto": objeto,
+        "nombre": nombre,
+        "volver": ruta_lista,
+    })
 
 
 def index(request):
@@ -599,3 +619,57 @@ def pago_editar(request, pk):
         "titulo": f"Editar pago: {pago.num_operacion}",
         "volver": "semana3:pago_list",
     })
+
+
+# ===========================================================================
+# DELETE  (Ejercicio 17) — confirmación + POST -> delete()
+# ===========================================================================
+
+def nivel_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(NivelEducativo, pk=pk),
+                     "semana3:nivel_list", "Nivel educativo")
+
+
+def anio_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(AnioLectivo, pk=pk),
+                     "semana3:anio_list", "Año lectivo")
+
+
+def descuento_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(TipoDescuento, pk=pk),
+                     "semana3:descuento_list", "Tipo de descuento")
+
+
+def metodo_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(MetodoPago, pk=pk),
+                     "semana3:metodo_list", "Método de pago")
+
+
+def apoderado_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(Apoderado, pk=pk),
+                     "semana3:apoderado_list", "Apoderado")
+
+
+def grado_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(Grado, pk=pk),
+                     "semana3:grado_list", "Grado")
+
+
+def estudiante_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(Estudiante, pk=pk),
+                     "semana3:estudiante_list", "Estudiante")
+
+
+def matricula_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(Matricula, pk=pk),
+                     "semana3:matricula_list", "Matrícula")
+
+
+def pension_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(Pension, pk=pk),
+                     "semana3:pension_list", "Pensión")
+
+
+def pago_eliminar(request, pk):
+    return _eliminar(request, get_object_or_404(Pago, pk=pk),
+                     "semana3:pago_list", "Pago")
