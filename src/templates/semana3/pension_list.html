@@ -5,7 +5,14 @@
 {% block content %}
 <h2>Pensiones</h2>
 
-<p><a class="btn btn-primary" href="{% url 'semana3:pension_crear' %}">+ Nueva pensión</a></p>
+<div class="toolbar">
+    <a class="chip {% if not f_estado %}active{% endif %}" href="{% url 'semana3:pension_list' %}">Todas</a>
+    {% for value, label in estados %}
+    <a class="chip {% if f_estado == value %}active{% endif %}" href="?estado={{ value }}">{{ label }}</a>
+    {% endfor %}
+    <span class="spacer"></span>
+    <a class="btn btn-primary" href="{% url 'semana3:pension_crear' %}">+ Nueva pensión</a>
+</div>
 
 <div class="table-wrap">
 <table class="citas">

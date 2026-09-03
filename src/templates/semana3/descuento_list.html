@@ -5,7 +5,13 @@
 {% block content %}
 <h2>Tipos de descuento</h2>
 
-<p><a class="btn btn-primary" href="{% url 'semana3:descuento_crear' %}">+ Nuevo tipo de descuento</a></p>
+<div class="toolbar">
+    <a class="chip {% if not f_activo %}active{% endif %}" href="{% url 'semana3:descuento_list' %}">Todos</a>
+    <a class="chip {% if f_activo == '1' %}active{% endif %}" href="?activo=1">Solo activos</a>
+    <a class="chip {% if f_activo == '0' %}active{% endif %}" href="?activo=0">Solo inactivos</a>
+    <span class="spacer"></span>
+    <a class="btn btn-primary" href="{% url 'semana3:descuento_crear' %}">+ Nuevo tipo de descuento</a>
+</div>
 
 <div class="table-wrap">
 <table class="citas">

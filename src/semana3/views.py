@@ -3,6 +3,7 @@ from datetime import date
 from decimal import Decimal
 
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import redirect, render
 
 from .forms import (
@@ -20,6 +21,9 @@ from .forms import (
 from .models import (
     AnioLectivo,
     Apoderado,
+    EstadoEstudiante,
+    EstadoMatricula,
+    EstadoPago,
     EstadoPension,
     Estudiante,
     Grado,
@@ -101,8 +105,17 @@ def anio_crear(request):
 # ---------------------------------------------------------------------------
 
 def descuento_list(request):
+    activo = request.GET.get("activo", "")
     descuentos = TipoDescuento.objects.all()
-    return render(request, "semana3/descuento_list.html", {"descuentos": descuentos})
+    if activo == "1":
+        descuentos = descuentos.filter(activo=True)      # WHERE activo = 1
+    elif activo == "0":
+        descuentos = descuentos.filter(activo=False)     # WHERE activo = 0
+    descuentos = descuentos.order_by("nombre")           # ORDER BY nombre
+    return render(request, "semana3/descuento_list.html", {
+        "descuentos": descuentos,
+        "f_activo": activo,
+    })
 
 
 def descuento_crear(request):
@@ -201,8 +214,37 @@ def grado_crear(request):
 # ---------------------------------------------------------------------------
 
 def estudiante_list(request):
+    estado = request.GET.get("estado", "")
+    anio = request.GET.get("anio", "")
+    grado = request.GET.get("grado", "")
+    q = request.GET.get("q", "").strip()
+
     estudiantes = Estudiante.objects.select_related("apoderado").all()
-    return render(request, "semana3/estudiante_list.html", {"estudiantes": estudiantes})
+    if estado:
+        estudiantes = estudiantes.filter(estado=estado)
+    if anio:
+        estudiantes = estudiantes.filter(matriculas__anio_lectivo_id=anio)
+    if grado:
+        estudiantes = estudiantes.filter(matriculas__grado_id=grado)
+    if q:
+        estudiantes = estudiantes.filter(
+            Q(nombres__icontains=q)
+            | Q(apellidos__icontains=q)
+            | Q(num_documento__icontains=q)
+            | Q(codigo_alumno__icontains=q)
+        )
+    estudiantes = estudiantes.distinct().order_by("apellidos", "nombres")
+
+    return render(request, "semana3/estudiante_list.html", {
+        "estudiantes": estudiantes,
+        "estados": EstadoEstudiante.choices,
+        "anios": AnioLectivo.objects.all(),
+        "grados": Grado.objects.select_related("nivel").all(),
+        "f_estado": estado,
+        "f_anio": anio,
+        "f_grado": grado,
+        "q": q,
+    })
 
 
 def estudiante_crear(request):
@@ -226,10 +268,25 @@ def estudiante_crear(request):
 # ---------------------------------------------------------------------------
 
 def matricula_list(request):
+    anio = request.GET.get("anio", "")
+    estado = request.GET.get("estado", "")
+
     matriculas = Matricula.objects.select_related(
         "estudiante", "anio_lectivo", "grado", "grado__nivel"
     ).all()
-    return render(request, "semana3/matricula_list.html", {"matriculas": matriculas})
+    if anio:
+        matriculas = matriculas.filter(anio_lectivo_id=anio)
+    if estado:
+        matriculas = matriculas.filter(estado_matricula=estado)
+    matriculas = matriculas.order_by("-fecha_registro")
+
+    return render(request, "semana3/matricula_list.html", {
+        "matriculas": matriculas,
+        "anios": AnioLectivo.objects.all(),
+        "estados": EstadoMatricula.choices,
+        "f_anio": anio,
+        "f_estado": estado,
+    })
 
 
 def matricula_crear(request):
@@ -276,10 +333,20 @@ def matricula_crear(request):
 # ---------------------------------------------------------------------------
 
 def pension_list(request):
+    estado = request.GET.get("estado", "")
+
     pensiones = Pension.objects.select_related(
         "matricula", "matricula__estudiante", "tipo_descuento"
     ).all()
-    return render(request, "semana3/pension_list.html", {"pensiones": pensiones})
+    if estado:
+        pensiones = pensiones.filter(estado_pago=estado)     # WHERE estado_pago = ?
+    pensiones = pensiones.order_by("fecha_vencimiento", "num_cuota")  # ORDER BY
+
+    return render(request, "semana3/pension_list.html", {
+        "pensiones": pensiones,
+        "estados": EstadoPension.choices,
+        "f_estado": estado,
+    })
 
 
 def pension_crear(request):
@@ -310,10 +377,20 @@ def pension_crear(request):
 # ---------------------------------------------------------------------------
 
 def pago_list(request):
+    estado = request.GET.get("estado", "")
+
     pagos = Pago.objects.select_related(
         "pension", "pension__matricula__estudiante", "metodo_pago"
     ).all()
-    return render(request, "semana3/pago_list.html", {"pagos": pagos})
+    if estado:
+        pagos = pagos.filter(estado_validacion=estado)
+    pagos = pagos.order_by("-fecha_operacion")
+
+    return render(request, "semana3/pago_list.html", {
+        "pagos": pagos,
+        "estados": EstadoPago.choices,
+        "f_estado": estado,
+    })
 
 
 def pago_crear(request):
