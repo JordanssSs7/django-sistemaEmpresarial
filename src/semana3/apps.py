@@ -1,0 +1,6 @@
+from django.apps import AppConfig
+
+
+class Semana3Config(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'semana3'
