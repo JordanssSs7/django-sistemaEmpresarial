@@ -10,7 +10,7 @@
 <div class="table-wrap">
 <table class="citas">
     <thead>
-        <tr><th>ID</th><th>Método</th><th>¿Requiere voucher?</th></tr>
+        <tr><th>ID</th><th>Método</th><th>¿Requiere voucher?</th><th>Acciones</th></tr>
     </thead>
     <tbody>
         {% for metodo in metodos %}
@@ -18,9 +18,10 @@
             <td>{{ metodo.id }}</td>
             <td>{{ metodo.nombre_metodo }}</td>
             <td>{{ metodo.requiere_voucher|yesno:"Sí,No" }}</td>
+            <td><a href="{% url 'semana3:metodo_editar' metodo.id %}">Editar</a></td>
         </tr>
         {% empty %}
-        <tr><td colspan="3" class="empty-state">Sin registros.</td></tr>
+        <tr><td colspan="4" class="empty-state">Sin registros.</td></tr>
         {% endfor %}
     </tbody>
 </table>

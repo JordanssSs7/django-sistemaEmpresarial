@@ -19,7 +19,7 @@
     <thead>
         <tr>
             <th>ID</th><th>Matrícula</th><th>Cuota</th><th>Monto base</th>
-            <th>Descuento</th><th>Monto final</th><th>Vence</th><th>Estado</th>
+            <th>Descuento</th><th>Monto final</th><th>Vence</th><th>Estado</th><th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -33,9 +33,10 @@
             <td>S/ {{ pension.monto_final }}</td>
             <td>{{ pension.fecha_vencimiento|date:"d/m/Y" }}</td>
             <td>{{ pension.get_estado_pago_display }}</td>
+            <td><a href="{% url 'semana3:pension_editar' pension.id %}">Editar</a></td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>
+        <tr><td colspan="9" class="empty-state">Sin registros.</td></tr>
         {% endfor %}
     </tbody>
 </table>

@@ -16,7 +16,7 @@
 <div class="table-wrap">
 <table class="citas">
     <thead>
-        <tr><th>ID</th><th>Nombre</th><th>Porcentaje</th><th>Activo</th></tr>
+        <tr><th>ID</th><th>Nombre</th><th>Porcentaje</th><th>Activo</th><th>Acciones</th></tr>
     </thead>
     <tbody>
         {% for descuento in descuentos %}
@@ -25,9 +25,10 @@
             <td>{{ descuento.nombre }}</td>
             <td>{{ descuento.porcentaje }}%</td>
             <td>{{ descuento.activo|yesno:"Sí,No" }}</td>
+            <td><a href="{% url 'semana3:descuento_editar' descuento.id %}">Editar</a></td>
         </tr>
         {% empty %}
-        <tr><td colspan="4" class="empty-state">Sin registros.</td></tr>
+        <tr><td colspan="5" class="empty-state">Sin registros.</td></tr>
         {% endfor %}
     </tbody>
 </table>

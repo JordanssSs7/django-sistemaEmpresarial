@@ -36,7 +36,7 @@
     <thead>
         <tr>
             <th>ID</th><th>Código</th><th>Documento</th><th>Nombres</th>
-            <th>Apellidos</th><th>Nacimiento</th><th>Estado</th><th>Apoderado</th>
+            <th>Apellidos</th><th>Nacimiento</th><th>Estado</th><th>Apoderado</th><th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -50,9 +50,10 @@
             <td>{{ estudiante.fecha_nacimiento|date:"d/m/Y" }}</td>
             <td>{{ estudiante.get_estado_display }}</td>
             <td>{{ estudiante.apoderado.nombres }} {{ estudiante.apoderado.apellidos }}</td>
+            <td><a href="{% url 'semana3:estudiante_editar' estudiante.id %}">Editar</a></td>
         </tr>
         {% empty %}
-        <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>
+        <tr><td colspan="9" class="empty-state">Sin registros.</td></tr>
         {% endfor %}
     </tbody>
 </table>

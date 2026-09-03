@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import (
     AnioLectivoForm,
@@ -45,6 +45,14 @@ def _sumar_meses(fecha, n):
     return date(anio, mes, min(fecha.day, ultimo_dia))
 
 
+def _calcular_monto_final(pension):
+    """Requisito 8: monto_final = monto_base menos el descuento (si aplica)."""
+    if pension.tipo_descuento:
+        factor = Decimal("1") - (pension.tipo_descuento.porcentaje / Decimal("100"))
+        return (pension.monto_base * factor).quantize(Decimal("0.01"))
+    return pension.monto_base
+
+
 def index(request):
     """Menú del módulo de gestión escolar (Semana 3)."""
     return render(request, "semana3/index.html")
@@ -75,6 +83,23 @@ def nivel_crear(request):
     })
 
 
+def nivel_editar(request, pk):
+    nivel = get_object_or_404(NivelEducativo, pk=pk)
+    if request.method == "POST":
+        form = NivelEducativoForm(request.POST, instance=nivel)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Nivel educativo actualizado correctamente.")
+            return redirect("semana3:nivel_list")
+    else:
+        form = NivelEducativoForm(instance=nivel)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar nivel: {nivel}",
+        "volver": "semana3:nivel_list",
+    })
+
+
 # ---------------------------------------------------------------------------
 # Año lectivo
 # ---------------------------------------------------------------------------
@@ -96,6 +121,23 @@ def anio_crear(request):
     return render(request, "semana3/form.html", {
         "form": form,
         "titulo": "Nuevo año lectivo",
+        "volver": "semana3:anio_list",
+    })
+
+
+def anio_editar(request, pk):
+    anio = get_object_or_404(AnioLectivo, pk=pk)
+    if request.method == "POST":
+        form = AnioLectivoForm(request.POST, instance=anio)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Año lectivo actualizado correctamente.")
+            return redirect("semana3:anio_list")
+    else:
+        form = AnioLectivoForm(instance=anio)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar año lectivo {anio}",
         "volver": "semana3:anio_list",
     })
 
@@ -134,6 +176,23 @@ def descuento_crear(request):
     })
 
 
+def descuento_editar(request, pk):
+    descuento = get_object_or_404(TipoDescuento, pk=pk)
+    if request.method == "POST":
+        form = TipoDescuentoForm(request.POST, instance=descuento)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Tipo de descuento actualizado correctamente.")
+            return redirect("semana3:descuento_list")
+    else:
+        form = TipoDescuentoForm(instance=descuento)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar descuento: {descuento.nombre}",
+        "volver": "semana3:descuento_list",
+    })
+
+
 # ---------------------------------------------------------------------------
 # Método de pago
 # ---------------------------------------------------------------------------
@@ -155,6 +214,23 @@ def metodo_crear(request):
     return render(request, "semana3/form.html", {
         "form": form,
         "titulo": "Nuevo método de pago",
+        "volver": "semana3:metodo_list",
+    })
+
+
+def metodo_editar(request, pk):
+    metodo = get_object_or_404(MetodoPago, pk=pk)
+    if request.method == "POST":
+        form = MetodoPagoForm(request.POST, instance=metodo)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Método de pago actualizado correctamente.")
+            return redirect("semana3:metodo_list")
+    else:
+        form = MetodoPagoForm(instance=metodo)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar método: {metodo.nombre_metodo}",
         "volver": "semana3:metodo_list",
     })
 
@@ -184,6 +260,23 @@ def apoderado_crear(request):
     })
 
 
+def apoderado_editar(request, pk):
+    apoderado = get_object_or_404(Apoderado, pk=pk)
+    if request.method == "POST":
+        form = ApoderadoForm(request.POST, instance=apoderado)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Apoderado actualizado correctamente.")
+            return redirect("semana3:apoderado_list")
+    else:
+        form = ApoderadoForm(instance=apoderado)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar apoderado: {apoderado}",
+        "volver": "semana3:apoderado_list",
+    })
+
+
 # ---------------------------------------------------------------------------
 # Grado  (ForeignKey -> NivelEducativo)
 # ---------------------------------------------------------------------------
@@ -205,6 +298,23 @@ def grado_crear(request):
     return render(request, "semana3/form.html", {
         "form": form,
         "titulo": "Nuevo grado",
+        "volver": "semana3:grado_list",
+    })
+
+
+def grado_editar(request, pk):
+    grado = get_object_or_404(Grado, pk=pk)
+    if request.method == "POST":
+        form = GradoForm(request.POST, instance=grado)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Grado actualizado correctamente.")
+            return redirect("semana3:grado_list")
+    else:
+        form = GradoForm(instance=grado)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar grado: {grado.nombre_grado}",
         "volver": "semana3:grado_list",
     })
 
@@ -259,6 +369,24 @@ def estudiante_crear(request):
     return render(request, "semana3/form.html", {
         "form": form,
         "titulo": "Nuevo estudiante",
+        "volver": "semana3:estudiante_list",
+    })
+
+
+def estudiante_editar(request, pk):
+    """Requisito 3 y 4: actualizar datos o cambiar el estado (baja lógica)."""
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    if request.method == "POST":
+        form = EstudianteForm(request.POST, instance=estudiante)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Estudiante actualizado correctamente.")
+            return redirect("semana3:estudiante_list")
+    else:
+        form = EstudianteForm(instance=estudiante)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar estudiante: {estudiante.nombres} {estudiante.apellidos}",
         "volver": "semana3:estudiante_list",
     })
 
@@ -328,6 +456,25 @@ def matricula_crear(request):
     })
 
 
+def matricula_editar(request, pk):
+    """Requisito 7: modificar el grado/sección de una matrícula.
+    NO se regeneran las cuotas: eso solo ocurre al crear."""
+    matricula = get_object_or_404(Matricula, pk=pk)
+    if request.method == "POST":
+        form = MatriculaForm(request.POST, instance=matricula)
+        if form.is_valid():
+            form.save()  # UPDATE
+            messages.success(request, "Matrícula actualizada correctamente.")
+            return redirect("semana3:matricula_list")
+    else:
+        form = MatriculaForm(instance=matricula)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar matrícula: {matricula}",
+        "volver": "semana3:matricula_list",
+    })
+
+
 # ---------------------------------------------------------------------------
 # Pensión  (FK -> Matricula, TipoDescuento opcional)
 # ---------------------------------------------------------------------------
@@ -354,12 +501,7 @@ def pension_crear(request):
         form = PensionForm(request.POST)
         if form.is_valid():
             pension = form.save(commit=False)
-            # Requisito 8: monto_final = monto_base menos el descuento (si aplica).
-            if pension.tipo_descuento:
-                factor = Decimal("1") - (pension.tipo_descuento.porcentaje / Decimal("100"))
-                pension.monto_final = (pension.monto_base * factor).quantize(Decimal("0.01"))
-            else:
-                pension.monto_final = pension.monto_base
+            pension.monto_final = _calcular_monto_final(pension)
             pension.save()  # INSERT
             messages.success(request, "Pensión registrada correctamente.")
             return redirect("semana3:pension_list")
@@ -368,6 +510,26 @@ def pension_crear(request):
     return render(request, "semana3/form.html", {
         "form": form,
         "titulo": "Nueva pensión",
+        "volver": "semana3:pension_list",
+    })
+
+
+def pension_editar(request, pk):
+    """Si cambia monto_base o el descuento, se recalcula monto_final."""
+    pension = get_object_or_404(Pension, pk=pk)
+    if request.method == "POST":
+        form = PensionForm(request.POST, instance=pension)
+        if form.is_valid():
+            pension = form.save(commit=False)
+            pension.monto_final = _calcular_monto_final(pension)
+            pension.save()  # UPDATE
+            messages.success(request, "Pensión actualizada correctamente.")
+            return redirect("semana3:pension_list")
+    else:
+        form = PensionForm(instance=pension)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar pensión: {pension}",
         "volver": "semana3:pension_list",
     })
 
@@ -405,5 +567,35 @@ def pago_crear(request):
     return render(request, "semana3/form.html", {
         "form": form,
         "titulo": "Nuevo pago",
+        "volver": "semana3:pago_list",
+    })
+
+
+def pago_editar(request, pk):
+    """Requisito 10: al validar el pago, se sincroniza el estado de la pensión.
+    - Aprobado  -> la pensión pasa a "Pagada".
+    - Rechazado / Anulado -> la pensión vuelve a "Pendiente".
+    """
+    pago = get_object_or_404(Pago, pk=pk)
+    if request.method == "POST":
+        form = PagoForm(request.POST, instance=pago)
+        if form.is_valid():
+            pago = form.save()  # UPDATE pago
+
+            pension = pago.pension
+            if pago.estado_validacion == EstadoPago.APROBADO:
+                pension.estado_pago = EstadoPension.PAGADA
+                pension.save()  # UPDATE pension
+            elif pago.estado_validacion in (EstadoPago.RECHAZADO, EstadoPago.ANULADO):
+                pension.estado_pago = EstadoPension.PENDIENTE
+                pension.save()  # UPDATE pension
+
+            messages.success(request, "Pago actualizado correctamente.")
+            return redirect("semana3:pago_list")
+    else:
+        form = PagoForm(instance=pago)
+    return render(request, "semana3/form.html", {
+        "form": form,
+        "titulo": f"Editar pago: {pago.num_operacion}",
         "volver": "semana3:pago_list",
     })

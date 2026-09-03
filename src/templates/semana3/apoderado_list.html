@@ -10,7 +10,7 @@
 <div class="table-wrap">
 <table class="citas">
     <thead>
-        <tr><th>ID</th><th>Documento</th><th>Nombres</th><th>Apellidos</th><th>Teléfono</th><th>Correo</th></tr>
+        <tr><th>ID</th><th>Documento</th><th>Nombres</th><th>Apellidos</th><th>Teléfono</th><th>Correo</th><th>Acciones</th></tr>
     </thead>
     <tbody>
         {% for apoderado in apoderados %}
@@ -21,9 +21,10 @@
             <td>{{ apoderado.apellidos }}</td>
             <td>{{ apoderado.telefono|default:"—" }}</td>
             <td>{{ apoderado.correo|default:"—" }}</td>
+            <td><a href="{% url 'semana3:apoderado_editar' apoderado.id %}">Editar</a></td>
         </tr>
         {% empty %}
-        <tr><td colspan="6" class="empty-state">Sin registros.</td></tr>
+        <tr><td colspan="7" class="empty-state">Sin registros.</td></tr>
         {% endfor %}
     </tbody>
 </table>

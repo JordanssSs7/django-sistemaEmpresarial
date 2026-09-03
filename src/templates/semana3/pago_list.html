@@ -19,7 +19,7 @@
     <thead>
         <tr>
             <th>ID</th><th>N° operación</th><th>Pensión</th><th>Monto</th>
-            <th>Fecha operación</th><th>Método</th><th>Validación</th>
+            <th>Fecha operación</th><th>Método</th><th>Validación</th><th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -32,9 +32,10 @@
             <td>{{ pago.fecha_operacion|date:"d/m/Y H:i" }}</td>
             <td>{{ pago.metodo_pago.nombre_metodo }}</td>
             <td>{{ pago.get_estado_validacion_display }}</td>
+            <td><a href="{% url 'semana3:pago_editar' pago.id %}">Editar</a></td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="empty-state">Sin registros.</td></tr>
+        <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>
         {% endfor %}
     </tbody>
 </table>
