@@ -24,7 +24,7 @@
         <tbody>
             {% for horario in horarios %}
             <tr>
-                <td>{{ horario.profesional_nombre }}</td>
+                <td>{{ horario.profesional.nombre }}</td>
                 <td>{{ horario.dia_semana }}</td>
                 <td>{{ horario.hora_inicio|time:"H:i" }}</td>
                 <td>{{ horario.hora_fin|time:"H:i" }}</td>

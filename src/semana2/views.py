@@ -1,83 +1,71 @@
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.utils import timezone
 
 from . import models
+from .models import Cita, Especialidad, Horario, Profesional
 from .forms import CitaForm, HorarioForm, ProfesionalForm
 
 
-# ---------------------------------------------------------------------------
-# Citas médicas
-# ---------------------------------------------------------------------------
-
 def listado(request):
-    """Muestra las citas registradas, con filtros por estado, profesional,
-    especialidad y fecha."""
+    """Ejercicio 4: listado de citas leído mediante Django ORM (QuerySet)
+    en vez de la lista en memoria de la Semana 2."""
     estado = request.GET.get("estado", "")
     profesional_id = request.GET.get("profesional", "")
     especialidad = request.GET.get("especialidad", "")
     fecha = request.GET.get("fecha", "")
 
-    citas = models.CITAS
+    citas = Cita.objects.select_related("profesional", "especialidad").all()
     if estado:
-        citas = [cita for cita in citas if cita["estado"] == estado]
+        citas = citas.filter(estado=estado)
     if profesional_id:
-        citas = [cita for cita in citas if cita["profesional_id"] == int(profesional_id)]
+        citas = citas.filter(profesional_id=profesional_id)
     if especialidad:
-        citas = [cita for cita in citas if cita["especialidad"] == especialidad]
+        citas = citas.filter(especialidad__nombre=especialidad)
     if fecha:
-        citas = [cita for cita in citas if cita["fecha"].isoformat() == fecha]
-
-    citas = sorted(citas, key=lambda cita: (cita["fecha"], cita["hora"]))
-    citas = [
-        {**cita, "profesional_nombre": models.nombre_profesional(cita["profesional_id"])}
-        for cita in citas
-    ]
+        citas = citas.filter(fecha=fecha)
+    citas = citas.order_by("fecha", "hora")
 
     contexto = {
         "citas": citas,
-        "estados": models.ESTADOS,
+        "estados": [valor for valor, _ in models.ESTADOS],
         "estado_activo": estado,
-        "profesionales": models.PROFESIONALES,
+        "profesionales": Profesional.objects.all(),
         "profesional_activo": profesional_id,
-        "especialidades": models.ESPECIALIDADES,
+        "especialidades": Especialidad.objects.all(),
         "especialidad_activa": especialidad,
         "fecha_activa": fecha,
-        "total": len(citas),
+        "total": citas.count(),
     }
     return render(request, "semana2/citas_list.html", contexto)
 
-
 def crear(request):
-    """Muestra y procesa el formulario de registro de una nueva cita."""
+    """Ejercicio 5: registro de una cita persistido mediante Django ORM
+    (Cita.objects.create), en vez de un .append() sobre una lista."""
     if request.method == "POST":
         form = CitaForm(request.POST)
         if form.is_valid():
             datos = form.cleaned_data
-            profesional_id = int(datos["profesional"])
-            profesional = models.profesional_por_id(profesional_id)
-            nueva_cita = {
-                "id": models.siguiente_id_cita(),
-                "paciente": datos["paciente"],
-                "documento": datos["documento"],
-                "profesional_id": profesional_id,
-                # Se deriva del profesional elegido, no la ingresa el usuario.
-                "especialidad": profesional["especialidad"],
-                "fecha": datos["fecha"],
-                "hora": datos["hora"],
-                "estado": datos["estado"],
-                "prioritaria": datos["prioritaria"],
-                "consultorio": datos["consultorio"],
-                "observaciones": datos["observaciones"],
-                "costo_estimado": models.costo_de_especialidad(profesional["especialidad"]),
-                "agendado_en": timezone.now(),
-            }
-            models.CITAS.append(nueva_cita)
+            profesional = Profesional.objects.get(pk=datos["profesional"])
+            cita = Cita.objects.create(
+                paciente=datos["paciente"],
+                documento=datos["documento"],
+                profesional=profesional,
+                # Se copia la especialidad y el costo del profesional elegido.
+                especialidad=profesional.especialidad,
+                costo_estimado=profesional.especialidad.costo,
+                fecha=datos["fecha"],
+                hora=datos["hora"],
+                estado=datos["estado"],
+                prioritaria=datos["prioritaria"],
+                consultorio=datos["consultorio"],
+                observaciones=datos["observaciones"],
+                # "agendado_en" no se pasa: el campo es auto_now_add=True.
+            )
             messages.success(
                 request,
-                f"Cita agendada correctamente para {nueva_cita['paciente']} "
-                f"con {profesional['nombre']} ({profesional['especialidad']}).",
+                f"Cita agendada correctamente para {cita.paciente} "
+                f"con {profesional.nombre} ({profesional.especialidad}).",
             )
             return redirect("semana2_listado")
     else:
@@ -87,98 +75,76 @@ def crear(request):
 
 
 def detalle(request, cita_id):
-    """Muestra el detalle completo de una cita registrada."""
-    cita = models.cita_por_id(cita_id)
+    cita = Cita.objects.select_related("profesional", "especialidad").filter(pk=cita_id).first()
     if cita is None:
         raise Http404("Cita no encontrada")
 
     contexto = {
         "cita": cita,
-        "profesional": models.profesional_por_id(cita["profesional_id"]),
+        "profesional": cita.profesional,
     }
     return render(request, "semana2/cita_detail.html", contexto)
 
 
 def actualizar_estado(request, cita_id):
-    """Cambia el estado de una cita (por ejemplo, para atenderla o
-    cancelarla, liberando el horario para otro paciente)."""
-    cita = models.cita_por_id(cita_id)
+    cita = Cita.objects.filter(pk=cita_id).first()
     if cita is None:
         raise Http404("Cita no encontrada")
 
     if request.method == "POST":
         nuevo_estado = request.POST.get("estado")
-        if nuevo_estado in models.ESTADOS:
-            cita["estado"] = nuevo_estado
+        if nuevo_estado in [valor for valor, _ in models.ESTADOS]:
+            cita.estado = nuevo_estado
+            cita.save(update_fields=["estado"])
             messages.success(
                 request,
-                f'La cita de {cita["paciente"]} ahora está "{nuevo_estado}".',
+                f'La cita de {cita.paciente} ahora está "{nuevo_estado}".',
             )
 
     return redirect("semana2_listado")
 
-
-# ---------------------------------------------------------------------------
-# Profesionales de la salud
-# ---------------------------------------------------------------------------
-
 def listado_profesionales(request):
-    """Muestra los profesionales registrados, su especialidad y disponibilidad."""
-    return render(request, "semana2/profesionales_list.html", {"profesionales": models.PROFESIONALES})
+    profesionales = Profesional.objects.select_related("especialidad").all()
+    return render(request, "semana2/profesionales_list.html", {"profesionales": profesionales})
 
 
 def crear_profesional(request):
-    """Muestra y procesa el formulario de registro de un nuevo profesional."""
+    """Ejercicio 5 (extendido): registro de un profesional vía ORM."""
     if request.method == "POST":
         form = ProfesionalForm(request.POST)
         if form.is_valid():
             datos = form.cleaned_data
-            nuevo_profesional = {
-                "id": models.siguiente_id_profesional(),
-                "nombre": datos["nombre"],
-                "especialidad": datos["especialidad"],
-                "disponible": datos["disponible"],
-            }
-            models.PROFESIONALES.append(nuevo_profesional)
-            messages.success(request, f"Profesional {nuevo_profesional['nombre']} registrado correctamente.")
+            especialidad = Especialidad.objects.get(nombre=datos["especialidad"])
+            profesional = Profesional.objects.create(
+                nombre=datos["nombre"],
+                especialidad=especialidad,
+                disponible=datos["disponible"],
+            )
+            messages.success(request, f"Profesional {profesional.nombre} registrado correctamente.")
             return redirect("semana2_profesionales")
     else:
         form = ProfesionalForm()
 
     return render(request, "semana2/profesional_form.html", {"form": form})
 
-
-# ---------------------------------------------------------------------------
-# Horarios de atención
-# ---------------------------------------------------------------------------
-
 def listado_horarios(request):
-    """Muestra los horarios de atención registrados por profesional."""
-    horarios = sorted(
-        models.HORARIOS,
-        key=lambda h: (h["profesional_id"], models.DIAS_SEMANA.index(h["dia_semana"]), h["hora_inicio"]),
+    horarios = models.Horario.objects.select_related("profesional").order_by(
+        "profesional__nombre", "dia_semana", "hora_inicio"
     )
-    horarios = [
-        {**h, "profesional_nombre": models.nombre_profesional(h["profesional_id"])}
-        for h in horarios
-    ]
     return render(request, "semana2/horarios_list.html", {"horarios": horarios})
 
-
 def crear_horario(request):
-    """Muestra y procesa el formulario de registro de un horario de atención."""
+    """Ejercicio 5 (extendido): registro de un horario vía ORM."""
     if request.method == "POST":
         form = HorarioForm(request.POST)
         if form.is_valid():
             datos = form.cleaned_data
-            nuevo_horario = {
-                "id": models.siguiente_id_horario(),
-                "profesional_id": int(datos["profesional"]),
-                "dia_semana": datos["dia_semana"],
-                "hora_inicio": datos["hora_inicio"],
-                "hora_fin": datos["hora_fin"],
-            }
-            models.HORARIOS.append(nuevo_horario)
+            Horario.objects.create(
+                profesional_id=int(datos["profesional"]),
+                dia_semana=datos["dia_semana"],
+                hora_inicio=datos["hora_inicio"],
+                hora_fin=datos["hora_fin"],
+            )
             messages.success(request, "Horario de atención registrado correctamente.")
             return redirect("semana2_horarios")
     else:

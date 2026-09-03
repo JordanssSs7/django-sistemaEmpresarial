@@ -43,7 +43,7 @@ class CitaForm(forms.Form):
     )
     estado = forms.ChoiceField(
         label="Estado inicial",
-        choices=[(e, e) for e in models.ESTADOS],
+        choices=models.ESTADOS,
     )
     prioritaria = forms.BooleanField(
         label="¿Requiere atención prioritaria? (adulto mayor, gestante, emergencia)",
@@ -62,8 +62,8 @@ class CitaForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["profesional"].choices = [
-            (p["id"], f'{p["nombre"]} — {p["especialidad"]}')
-            for p in models.profesionales_disponibles()
+            (p.id, f"{p.nombre} — {p.especialidad}")
+            for p in models.Profesional.objects.filter(disponible=True)
         ]
 
     def clean_documento(self):
@@ -83,8 +83,9 @@ class CitaForm(forms.Form):
         return fecha
 
     def clean(self):
-        """Valida que el profesional atienda ese día/hora y que el horario
-        no esté ya ocupado por otra cita activa."""
+        """Valida, consultando la base de datos vía ORM, que el profesional
+        atienda ese día/hora y que el horario no esté ya ocupado por otra
+        cita activa."""
         cleaned_data = super().clean()
         profesional_id = cleaned_data.get("profesional")
         fecha = cleaned_data.get("fecha")
@@ -92,12 +93,26 @@ class CitaForm(forms.Form):
 
         if profesional_id and fecha and hora:
             profesional_id = int(profesional_id)
-            if not models.horario_cubre_fecha_hora(profesional_id, fecha, hora):
+            dia_semana = models.DIAS_SEMANA[fecha.weekday()][0]
+
+            cubre_horario = models.Horario.objects.filter(
+                profesional_id=profesional_id,
+                dia_semana=dia_semana,
+                hora_inicio__lte=hora,
+                hora_fin__gt=hora,
+            ).exists()
+            if not cubre_horario:
                 raise forms.ValidationError(
                     "El profesional seleccionado no tiene horario de atención "
                     "en ese día y hora. Revisa sus horarios disponibles."
                 )
-            if models.horario_ocupado(profesional_id, fecha, hora):
+
+            ocupado = (
+                models.Cita.objects.filter(profesional_id=profesional_id, fecha=fecha, hora=hora)
+                .exclude(estado="Cancelada")
+                .exists()
+            )
+            if ocupado:
                 raise forms.ValidationError(
                     "Ese horario ya está ocupado por otra cita activa con el "
                     "mismo profesional. Elige otra fecha u hora."
@@ -112,15 +127,18 @@ class ProfesionalForm(forms.Form):
         label="Nombre completo",
         max_length=100,
     )
-    especialidad = forms.ChoiceField(
-        label="Especialidad",
-        choices=[(e["nombre"], e["nombre"]) for e in models.ESPECIALIDADES],
-    )
+    especialidad = forms.ChoiceField(label="Especialidad")
     disponible = forms.BooleanField(
         label="Disponible para agendar citas",
         required=False,
         initial=True,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["especialidad"].choices = [
+            (e.nombre, e.nombre) for e in models.Especialidad.objects.all()
+        ]
 
 
 class HorarioForm(forms.Form):
@@ -129,7 +147,7 @@ class HorarioForm(forms.Form):
     profesional = forms.ChoiceField(label="Profesional")
     dia_semana = forms.ChoiceField(
         label="Día de atención",
-        choices=[(d, d) for d in models.DIAS_SEMANA],
+        choices=models.DIAS_SEMANA,
     )
     hora_inicio = forms.TimeField(
         label="Hora de inicio",
@@ -143,12 +161,13 @@ class HorarioForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["profesional"].choices = [
-            (p["id"], p["nombre"]) for p in models.PROFESIONALES
+            (p.id, p.nombre) for p in models.Profesional.objects.all()
         ]
 
     def clean(self):
-        """Valida que el rango de horas sea válido y que no se solape con
-        otro horario ya registrado para el mismo profesional y día."""
+        """Valida que el rango de horas sea válido y que no se solape,
+        consultando la base de datos vía ORM, con otro horario ya
+        registrado para el mismo profesional y día."""
         cleaned_data = super().clean()
         profesional_id = cleaned_data.get("profesional")
         dia_semana = cleaned_data.get("dia_semana")
@@ -159,7 +178,13 @@ class HorarioForm(forms.Form):
             raise forms.ValidationError("La hora de fin debe ser posterior a la hora de inicio.")
 
         if profesional_id and dia_semana and hora_inicio and hora_fin and hora_inicio < hora_fin:
-            if models.hay_solapamiento_horario(int(profesional_id), dia_semana, hora_inicio, hora_fin):
+            solapa = models.Horario.objects.filter(
+                profesional_id=int(profesional_id),
+                dia_semana=dia_semana,
+                hora_inicio__lt=hora_fin,
+                hora_fin__gt=hora_inicio,
+            ).exists()
+            if solapa:
                 raise forms.ValidationError(
                     "Ese profesional ya tiene un horario registrado que se cruza "
                     "con este rango en el mismo día."

@@ -78,7 +78,7 @@
             <tr class="{% if cita.prioritaria %}prioritaria{% endif %}">
                 <td>{{ cita.paciente }}</td>
                 <td>{{ cita.documento }}</td>
-                <td>{{ cita.profesional_nombre }}</td>
+                <td>{{ cita.profesional.nombre }}</td>
                 <td>{{ cita.especialidad }}</td>
                 <td>{{ cita.fecha|date:"d/m/Y" }}</td>
                 <td>{{ cita.hora|time:"H:i" }}</td>
