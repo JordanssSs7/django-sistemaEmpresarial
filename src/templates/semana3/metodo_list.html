@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Métodos de pago{% endblock %}
+
+{% block content %}
+<h2>Métodos de pago</h2>
+
+<p><a class="btn btn-primary" href="{% url 'semana3:metodo_crear' %}">+ Nuevo método de pago</a></p>
+
+<div class="table-wrap">
+<table class="citas">
+    <thead>
+        <tr><th>ID</th><th>Método</th><th>¿Requiere voucher?</th></tr>
+    </thead>
+    <tbody>
+        {% for metodo in metodos %}
+        <tr>
+            <td>{{ metodo.id }}</td>
+            <td>{{ metodo.nombre_metodo }}</td>
+            <td>{{ metodo.requiere_voucher|yesno:"Sí,No" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="empty-state">Sin registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

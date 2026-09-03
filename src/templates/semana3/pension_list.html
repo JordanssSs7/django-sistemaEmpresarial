@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Pensiones{% endblock %}
+
+{% block content %}
+<h2>Pensiones</h2>
+
+<p><a class="btn btn-primary" href="{% url 'semana3:pension_crear' %}">+ Nueva pensión</a></p>
+
+<div class="table-wrap">
+<table class="citas">
+    <thead>
+        <tr>
+            <th>ID</th><th>Matrícula</th><th>Cuota</th><th>Monto base</th>
+            <th>Descuento</th><th>Monto final</th><th>Vence</th><th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pension in pensiones %}
+        <tr>
+            <td>{{ pension.id }}</td>
+            <td>{{ pension.matricula }}</td>
+            <td>{{ pension.num_cuota }}</td>
+            <td>S/ {{ pension.monto_base }}</td>
+            <td>{{ pension.tipo_descuento.nombre|default:"—" }}</td>
+            <td>S/ {{ pension.monto_final }}</td>
+            <td>{{ pension.fecha_vencimiento|date:"d/m/Y" }}</td>
+            <td>{{ pension.get_estado_pago_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -4,5 +4,23 @@
 
 {% block content %}
 <h2>Sistema de Gestión de Matrículas y Pensiones</h2>
-<p>App de la Semana 3. Módulo de gestión escolar con persistencia en base de datos (Django ORM + SQLite).</p>
+<p>Módulo de la Semana 3 con persistencia en base de datos (Django ORM + SQLite).</p>
+
+<h3>Catálogos (entidades independientes)</h3>
+<ul>
+    <li><a href="{% url 'semana3:nivel_list' %}">Niveles educativos</a></li>
+    <li><a href="{% url 'semana3:anio_list' %}">Años lectivos</a></li>
+    <li><a href="{% url 'semana3:descuento_list' %}">Tipos de descuento</a></li>
+    <li><a href="{% url 'semana3:metodo_list' %}">Métodos de pago</a></li>
+    <li><a href="{% url 'semana3:apoderado_list' %}">Apoderados</a></li>
+</ul>
+
+<h3>Entidades relacionadas (ForeignKey)</h3>
+<ul>
+    <li><a href="{% url 'semana3:grado_list' %}">Grados</a> &rarr; Nivel educativo</li>
+    <li><a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a> &rarr; Apoderado</li>
+    <li><a href="{% url 'semana3:matricula_list' %}">Matrículas</a> &rarr; Estudiante, Año lectivo, Grado</li>
+    <li><a href="{% url 'semana3:pension_list' %}">Pensiones</a> &rarr; Matrícula, Tipo de descuento</li>
+    <li><a href="{% url 'semana3:pago_list' %}">Pagos</a> &rarr; Pensión, Método de pago</li>
+</ul>
 {% endblock %}

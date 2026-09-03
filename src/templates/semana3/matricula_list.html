@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Matrículas{% endblock %}
+
+{% block content %}
+<h2>Matrículas</h2>
+
+<p><a class="btn btn-primary" href="{% url 'semana3:matricula_crear' %}">+ Nueva matrícula</a></p>
+
+<div class="table-wrap">
+<table class="citas">
+    <thead>
+        <tr>
+            <th>ID</th><th>Estudiante</th><th>Año lectivo</th><th>Grado</th>
+            <th>Costo matrícula</th><th>Estado</th><th>Registrada</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for matricula in matriculas %}
+        <tr>
+            <td>{{ matricula.id }}</td>
+            <td>{{ matricula.estudiante.nombres }} {{ matricula.estudiante.apellidos }}</td>
+            <td>{{ matricula.anio_lectivo.anio }}</td>
+            <td>{{ matricula.grado.nombre_grado }}</td>
+            <td>S/ {{ matricula.costo_matricula }}</td>
+            <td>{{ matricula.get_estado_matricula_display }}</td>
+            <td>{{ matricula.fecha_registro|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="empty-state">Sin registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

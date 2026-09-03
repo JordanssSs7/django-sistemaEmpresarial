@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Pagos{% endblock %}
+
+{% block content %}
+<h2>Pagos</h2>
+
+<p><a class="btn btn-primary" href="{% url 'semana3:pago_crear' %}">+ Nuevo pago</a></p>
+
+<div class="table-wrap">
+<table class="citas">
+    <thead>
+        <tr>
+            <th>ID</th><th>N° operación</th><th>Pensión</th><th>Monto</th>
+            <th>Fecha operación</th><th>Método</th><th>Validación</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pago in pagos %}
+        <tr>
+            <td>{{ pago.id }}</td>
+            <td>{{ pago.num_operacion }}</td>
+            <td>{{ pago.pension }}</td>
+            <td>S/ {{ pago.monto_pagado }}</td>
+            <td>{{ pago.fecha_operacion|date:"d/m/Y H:i" }}</td>
+            <td>{{ pago.metodo_pago.nombre_metodo }}</td>
+            <td>{{ pago.get_estado_validacion_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="empty-state">Sin registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Años lectivos{% endblock %}
+
+{% block content %}
+<h2>Años lectivos</h2>
+
+<p><a class="btn btn-primary" href="{% url 'semana3:anio_crear' %}">+ Nuevo año lectivo</a></p>
+
+<div class="table-wrap">
+<table class="citas">
+    <thead>
+        <tr>
+            <th>ID</th><th>Año</th><th>Inicio</th><th>Fin</th>
+            <th>Costo matrícula</th><th>Monto pensión</th><th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for anio in anios %}
+        <tr>
+            <td>{{ anio.id }}</td>
+            <td>{{ anio.anio }}</td>
+            <td>{{ anio.fecha_inicio|date:"d/m/Y" }}</td>
+            <td>{{ anio.fecha_fin|date:"d/m/Y" }}</td>
+            <td>S/ {{ anio.costo_matricula }}</td>
+            <td>S/ {{ anio.monto_pension }}</td>
+            <td>{{ anio.get_estado_display }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="empty-state">Sin registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}

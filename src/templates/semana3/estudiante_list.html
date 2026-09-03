@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Estudiantes{% endblock %}
+
+{% block content %}
+<h2>Estudiantes</h2>
+
+<p><a class="btn btn-primary" href="{% url 'semana3:estudiante_crear' %}">+ Nuevo estudiante</a></p>
+
+<div class="table-wrap">
+<table class="citas">
+    <thead>
+        <tr>
+            <th>ID</th><th>Código</th><th>Documento</th><th>Nombres</th>
+            <th>Apellidos</th><th>Nacimiento</th><th>Estado</th><th>Apoderado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for estudiante in estudiantes %}
+        <tr>
+            <td>{{ estudiante.id }}</td>
+            <td>{{ estudiante.codigo_alumno }}</td>
+            <td>{{ estudiante.num_documento }}</td>
+            <td>{{ estudiante.nombres }}</td>
+            <td>{{ estudiante.apellidos }}</td>
+            <td>{{ estudiante.fecha_nacimiento|date:"d/m/Y" }}</td>
+            <td>{{ estudiante.get_estado_display }}</td>
+            <td>{{ estudiante.apoderado.nombres }} {{ estudiante.apoderado.apellidos }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
