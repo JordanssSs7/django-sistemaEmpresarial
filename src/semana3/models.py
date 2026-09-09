@@ -220,6 +220,38 @@ class Estudiante(models.Model):
         return f"{self.codigo_alumno} - {self.nombres} {self.apellidos}"
 
 
+# ---------------------------------------------------------------------------
+# RELACIÓN 1:1 (Semana 4, Ejercicio 2)
+# ---------------------------------------------------------------------------
+# OneToOneField = un ForeignKey con unique=True agregado por Django: como
+# máximo un FichaMedica por Estudiante. Es la "ficha complementaria": datos
+# de salud que no todo Estudiante necesariamente tiene llenos, y que no
+# tendría sentido guardar como columnas sueltas en la tabla principal.
+
+class FichaMedica(models.Model):
+    """Información médica complementaria de un estudiante (a lo sumo una)."""
+
+    estudiante = models.OneToOneField(
+        Estudiante,
+        on_delete=models.CASCADE,       # es una extensión de Estudiante: si se borra
+                                         # el estudiante, su ficha médica no tiene
+                                         # razón de existir por separado.
+        related_name="ficha_medica",    # acceso inverso: estudiante.ficha_medica
+    )
+    tipo_sangre = models.CharField(max_length=5, blank=True)     # ej. "O+"
+    alergias = models.TextField(blank=True)
+    contacto_emergencia_nombre = models.CharField(max_length=150)
+    contacto_emergencia_telefono = models.CharField(max_length=20)
+    observaciones = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Ficha médica"
+        verbose_name_plural = "Fichas médicas"
+
+    def __str__(self):
+        return f"Ficha médica de {self.estudiante}"
+
+
 class Matricula(models.Model):
     """Inscripción de un estudiante en un año lectivo y grado."""
 
