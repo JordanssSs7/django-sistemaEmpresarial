@@ -210,6 +210,15 @@ class Estudiante(models.Model):
         on_delete=models.PROTECT,    # Requisito 4: conservar historial, no borrar en cascada
         related_name="estudiantes",  # apoderado.estudiantes.all() -> los hijos de esa familia
     )
+    # RELACIÓN N:M (Semana 4, Ejercicio 4): un estudiante lleva muchos cursos
+    # y un curso tiene muchos estudiantes. Se usa "Curso"/"CursoEstudiante"
+    # como strings porque esas clases se definen más abajo en este archivo.
+    cursos = models.ManyToManyField(
+        "Curso",
+        through="CursoEstudiante",   # la tabla intermedia guarda nota_final y estado
+        related_name="estudiantes",  # curso.estudiantes.all()
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Estudiante"
@@ -256,8 +265,6 @@ class TipoObservacion(models.TextChoices):
     ACADEMICA = "ACADEMICA", "Académica"
     CONDUCTUAL = "CONDUCTUAL", "Conductual"
     ADMINISTRATIVA = "ADMINISTRATIVA", "Administrativa"
-
-
 # ---------------------------------------------------------------------------
 # RELACIÓN 1:N (Semana 4, Ejercicio 3)
 # ---------------------------------------------------------------------------
@@ -273,7 +280,6 @@ class TipoObservacion(models.TextChoices):
 class Observacion(models.Model):
     """Nota académica, conductual o administrativa registrada sobre un
     estudiante. Un mismo estudiante puede acumular muchas a lo largo del año."""
-
     estudiante = models.ForeignKey(
         Estudiante,
         on_delete=models.CASCADE,      # son notas internas del expediente, sin valor
@@ -297,6 +303,74 @@ class Observacion(models.Model):
 
     def __str__(self):
         return f"[{self.get_tipo_display()}] {self.estudiante} — {self.fecha}"
+
+
+# ---------------------------------------------------------------------------
+# RELACIÓN N:M CON MODELO INTERMEDIO (Semana 4, Ejercicio 4)
+# ---------------------------------------------------------------------------
+# Un Estudiante lleva muchos Cursos, y un Curso tiene muchos Estudiantes ->
+# es una relación muchos a muchos "pura". Pero la inscripción de UN estudiante
+# en UN curso necesita guardar datos que no pertenecen ni a Estudiante
+# (que no tiene una sola nota, tiene una por curso) ni a Curso (que no tiene
+# una sola nota, tiene una por estudiante): la nota final y el estado de esa
+# inscripción puntual. Por eso no basta un ManyToManyField simple: se necesita
+# un modelo intermedio (through) que sea la propia "fila" de la relación.
+
+class Curso(models.Model):
+    """Asignatura dictada en el colegio (Matemática, Comunicación, etc.)."""
+
+    nombre = models.CharField(max_length=100, unique=True)
+    creditos = models.PositiveSmallIntegerField(default=1)
+
+    class Meta:
+        verbose_name = "Curso"
+        verbose_name_plural = "Cursos"
+        ordering = ["nombre"]
+
+    def __str__(self):
+        return self.nombre
+
+
+class EstadoCursoEstudiante(models.TextChoices):
+    CURSANDO = "CURSANDO", "Cursando"
+    APROBADO = "APROBADO", "Aprobado"
+    DESAPROBADO = "DESAPROBADO", "Desaprobado"
+    RETIRADO = "RETIRADO", "Retirado"
+
+
+class CursoEstudiante(models.Model):
+    """Modelo intermedio de la relación N:M Estudiante<->Curso: es la propia
+    inscripción, con su nota y estado (información de la RELACIÓN, no de
+    ninguna de las dos entidades por separado)."""
+
+    estudiante = models.ForeignKey(
+        Estudiante,
+        on_delete=models.CASCADE,          # si se borra el estudiante, sus
+                                            # inscripciones a cursos no tienen sentido
+        related_name="inscripciones_curso",
+    )
+    curso = models.ForeignKey(
+        Curso,
+        on_delete=models.CASCADE,          # si se borra el curso, las inscripciones
+                                            # a ese curso tampoco tienen sentido
+        related_name="inscripciones_curso",
+    )
+    fecha_inscripcion = models.DateField(auto_now_add=True)
+    nota_final = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
+    estado = models.CharField(
+        max_length=12,
+        choices=EstadoCursoEstudiante.choices,
+        default=EstadoCursoEstudiante.CURSANDO,
+    )
+
+    class Meta:
+        verbose_name = "Inscripción a curso"
+        verbose_name_plural = "Inscripciones a cursos"
+        # un estudiante no puede inscribirse dos veces al mismo curso
+        unique_together = ("estudiante", "curso")
+
+    def __str__(self):
+        return f"{self.estudiante} en {self.curso} ({self.estado})"
 
 
 class Matricula(models.Model):
