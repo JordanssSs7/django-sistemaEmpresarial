@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de estudiante{% endblock %}
+
+{% block content %}
+<h2>{{ estudiante.nombres }} {{ estudiante.apellidos }}</h2>
+
+<div class="form-card detail-card">
+    <p><strong>Código:</strong> {{ estudiante.codigo_alumno }}</p>
+    <p><strong>Documento:</strong> {{ estudiante.num_documento }}</p>
+    <p><strong>Estado:</strong> {{ estudiante.get_estado_display }}</p>
+
+    {# Acceso DIRECTO a una relación ForeignKey (Estudiante -> Apoderado) #}
+    <p><strong>Apoderado (FK directa):</strong>
+        {{ estudiante.apoderado.nombres }} {{ estudiante.apoderado.apellidos }}
+        ({{ estudiante.apoderado.telefono }})
+    </p>
+
+    {# Acceso a la relación 1:1 (Estudiante -> FichaMedica), traída con select_related() #}
+    <p><strong>Ficha médica (OneToOne):</strong>
+        {% if estudiante.ficha_medica %}
+            {{ estudiante.ficha_medica.tipo_sangre|default:"Sin registrar" }} —
+            Contacto de emergencia: {{ estudiante.ficha_medica.contacto_emergencia_nombre }}
+            ({{ estudiante.ficha_medica.contacto_emergencia_telefono }})
+        {% else %}
+            <span class="empty-state">Sin ficha médica registrada.</span>
+        {% endif %}
+    </p>
+
+    <div class="form-actions">
+        <a href="{% url 'semana3:estudiante_list' %}" class="btn btn-secondary">Volver al listado</a>
+    </div>
+</div>
+
+{# Acceso INVERSO a la relación 1:N (Observacion -> Estudiante, related_name="observaciones") #}
+<h3>Observaciones (relación 1:N, acceso inverso)</h3>
+<div class="table-wrap">
+    <table class="citas">
+        <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>Descripción</th></tr>
+        </thead>
+        <tbody>
+            {% for obs in observaciones %}
+            <tr>
+                <td>{{ obs.fecha|date:"d/m/Y" }}</td>
+                <td>{{ obs.get_tipo_display }}</td>
+                <td>{{ obs.descripcion }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="empty-state">Sin observaciones registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

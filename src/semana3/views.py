@@ -46,6 +46,7 @@ from .forms import (
 from .models import (
     AnioLectivo,
     Apoderado,
+    Curso,
     EstadoEstudiante,
     EstadoMatricula,
     EstadoPago,
@@ -493,6 +494,43 @@ def estudiante_editar(request, pk):
         "titulo": f"Editar estudiante: {estudiante.nombres} {estudiante.apellidos}",
         "volver": "semana3:estudiante_list",
     })
+
+
+# ---------------------------------------------------------------------------
+# Semana 4, Ejercicio 6 — consultar las relaciones nuevas desde la View
+# ---------------------------------------------------------------------------
+
+def estudiante_detalle(request, pk):
+    """Usa select_related() para la relación 1:1: trae en una sola consulta
+    (con JOIN) al estudiante junto con su apoderado (FK) y su ficha médica
+    (OneToOne inverso) - select_related() sirve para relaciones "a lo sumo
+    un objeto" (FK y OneToOne), tanto hacia adelante como hacia atrás.
+
+    Las observaciones (1:N) son "a lo sumo muchos objetos", así que se
+    resuelven aparte con el manager inverso (Django las trae en su propia
+    consulta, no con JOIN).
+    """
+    estudiante = get_object_or_404(
+        Estudiante.objects.select_related("apoderado", "ficha_medica"),
+        pk=pk,
+    )
+    observaciones = estudiante.observaciones.all()   # related_name de Observacion (1:N)
+    return render(request, "semana3/estudiante_detalle.html", {
+        "estudiante": estudiante,
+        "observaciones": observaciones,
+    })
+
+
+def curso_list(request):
+    """Usa prefetch_related() para recorrer el modelo intermedio
+    CursoEstudiante (N:M Estudiante<->Curso) sin caer en el problema N+1:
+    sin esto, por cada curso se dispararía una consulta aparte para traer
+    a sus estudiantes inscritos; con prefetch_related(), Django hace UNA
+    sola consulta extra para TODAS las inscripciones y las reparte en
+    memoria entre los cursos.
+    """
+    cursos = Curso.objects.prefetch_related("inscripciones_curso__estudiante")
+    return render(request, "semana3/curso_list.html", {"cursos": cursos})
 
 
 # ---------------------------------------------------------------------------

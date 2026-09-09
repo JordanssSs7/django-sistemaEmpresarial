@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Cursos{% endblock %}
+
+{% block content %}
+<h2>Cursos</h2>
+
+{# Recorrido del modelo intermedio CursoEstudiante (N:M Estudiante<->Curso),
+   traído con prefetch_related() para evitar una consulta por cada curso. #}
+{% for curso in cursos %}
+<div class="form-card" style="max-width:100%; margin-bottom:1rem;">
+    <h3>{{ curso.nombre }} <small class="empty-state">({{ curso.creditos }} créditos)</small></h3>
+    <div class="table-wrap">
+        <table class="citas">
+            <thead>
+                <tr><th>Estudiante</th><th>Fecha de inscripción</th><th>Nota final</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+                {% for inscripcion in curso.inscripciones_curso.all %}
+                <tr>
+                    <td>{{ inscripcion.estudiante.nombres }} {{ inscripcion.estudiante.apellidos }}</td>
+                    <td>{{ inscripcion.fecha_inscripcion|date:"d/m/Y" }}</td>
+                    <td>{{ inscripcion.nota_final|default:"—" }}</td>
+                    <td>{{ inscripcion.get_estado_display }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="empty-state">Sin estudiantes inscritos.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% empty %}
+<p class="empty-state">No hay cursos registrados.</p>
+{% endfor %}
+{% endblock %}

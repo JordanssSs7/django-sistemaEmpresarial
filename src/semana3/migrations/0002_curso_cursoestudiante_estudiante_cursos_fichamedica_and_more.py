@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('fecha_inscripcion', models.DateField(auto_now_add=True)),
                 ('nota_final', models.DecimalField(blank=True, decimal_places=2, max_digits=4, null=True)),
                 ('estado', models.CharField(choices=[('CURSANDO', 'Cursando'), ('APROBADO', 'Aprobado'), ('DESAPROBADO', 'Desaprobado'), ('RETIRADO', 'Retirado')], default='CURSANDO', max_length=12)),
-                ('curso', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inscripciones_curso', to='semana3.curso')),
+           ('curso', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inscripciones_curso', to='semana3.curso')),
                 ('estudiante', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inscripciones_curso', to='semana3.estudiante')),
             ],
             options={

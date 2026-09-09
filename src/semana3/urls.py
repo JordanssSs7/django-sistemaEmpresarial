@@ -74,6 +74,10 @@ urlpatterns = [
     path("estudiantes/<int:pk>/editar/", views.estudiante_editar, name="estudiante_editar"),
     path("estudiantes/<int:pk>/eliminar/", views.estudiante_eliminar, name="estudiante_eliminar"),
 
+    # Semana 4, Ejercicio 6: consultar relaciones (select_related / prefetch_related)
+    path("estudiantes/<int:pk>/", views.estudiante_detalle, name="estudiante_detalle"),
+    path("cursos/", views.curso_list, name="curso_list"),
+
     # --- Matrícula ---  (FK -> Estudiante, AnioLectivo, Grado)
     path("matriculas/", views.matricula_list, name="matricula_list"),            # acepta ?anio= ?estado=
     path("matriculas/nueva/", views.matricula_crear, name="matricula_crear"),    # al crear -> genera 10 pensiones
