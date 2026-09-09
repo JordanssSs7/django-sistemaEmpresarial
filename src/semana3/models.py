@@ -231,7 +231,7 @@ class Estudiante(models.Model):
 class FichaMedica(models.Model):
     """Información médica complementaria de un estudiante (a lo sumo una)."""
 
-    estudiante = models.OneToOneField(
+    estudiante = models.OneToOneField( #<---------
         Estudiante,
         on_delete=models.CASCADE,       # es una extensión de Estudiante: si se borra
                                          # el estudiante, su ficha médica no tiene
@@ -250,6 +250,53 @@ class FichaMedica(models.Model):
 
     def __str__(self):
         return f"Ficha médica de {self.estudiante}"
+
+
+class TipoObservacion(models.TextChoices):
+    ACADEMICA = "ACADEMICA", "Académica"
+    CONDUCTUAL = "CONDUCTUAL", "Conductual"
+    ADMINISTRATIVA = "ADMINISTRATIVA", "Administrativa"
+
+
+# ---------------------------------------------------------------------------
+# RELACIÓN 1:N (Semana 4, Ejercicio 3)
+# ---------------------------------------------------------------------------
+# Un Estudiante puede tener muchas Observaciones a lo largo del tiempo, pero
+# cada Observacion pertenece a un único Estudiante. Por eso:
+#   - Estudiante  = lado "1"  (el que es referenciado)
+#   - Observacion = lado "N"  (el que tiene muchos registros por cada Estudiante)
+# La ForeignKey se declara en el lado "N" (Observacion) porque es ahí donde
+# físicamente se necesita la columna extra (estudiante_id) para poder repetir
+# el mismo estudiante en varias filas; el lado "1" no necesita ninguna columna
+# nueva, solo gana el acceso inverso a través del related_name.
+
+class Observacion(models.Model):
+    """Nota académica, conductual o administrativa registrada sobre un
+    estudiante. Un mismo estudiante puede acumular muchas a lo largo del año."""
+
+    estudiante = models.ForeignKey(
+        Estudiante,
+        on_delete=models.CASCADE,      # son notas internas del expediente, sin valor
+                                        # legal/financiero propio: si se borra el
+                                        # estudiante, sus observaciones no tienen
+                                        # ningún sentido guardadas por separado.
+        related_name="observaciones",  # acceso inverso: estudiante.observaciones.all()
+    )
+    fecha = models.DateField(auto_now_add=True)
+    tipo = models.CharField(
+        max_length=15,
+        choices=TipoObservacion.choices,
+        default=TipoObservacion.ACADEMICA,
+    )
+    descripcion = models.TextField()
+
+    class Meta:
+        verbose_name = "Observación"
+        verbose_name_plural = "Observaciones"
+        ordering = ["-fecha"]
+
+    def __str__(self):
+        return f"[{self.get_tipo_display()}] {self.estudiante} — {self.fecha}"
 
 
 class Matricula(models.Model):
