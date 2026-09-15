@@ -74,9 +74,14 @@ urlpatterns = [
     path("estudiantes/<int:pk>/editar/", views.estudiante_editar, name="estudiante_editar"),
     path("estudiantes/<int:pk>/eliminar/", views.estudiante_eliminar, name="estudiante_eliminar"),
 
-    # Semana 4, Ejercicio 6: consultar relaciones (select_related / prefetch_related)
+    # Semana 4, Ejercicio 12: consultar relaciones (select_related / prefetch_related)
     path("estudiantes/<int:pk>/", views.estudiante_detalle, name="estudiante_detalle"),
     path("cursos/", views.curso_list, name="curso_list"),
+
+    # Semana 4, Ejercicio 13: CRUD del modelo intermedio CursoEstudiante (N:M)
+    path("inscripciones/nueva/", views.inscripcion_crear, name="inscripcion_crear"),
+    path("inscripciones/<int:pk>/editar/", views.inscripcion_editar, name="inscripcion_editar"),
+    path("inscripciones/<int:pk>/eliminar/", views.inscripcion_eliminar, name="inscripcion_eliminar"),
 
     # --- Matrícula ---  (FK -> Estudiante, AnioLectivo, Grado)
     path("matriculas/", views.matricula_list, name="matricula_list"),            # acepta ?anio= ?estado=

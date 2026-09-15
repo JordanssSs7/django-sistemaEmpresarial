@@ -210,9 +210,6 @@ class Estudiante(models.Model):
         on_delete=models.PROTECT,    # Requisito 4: conservar historial, no borrar en cascada
         related_name="estudiantes",  # apoderado.estudiantes.all() -> los hijos de esa familia
     )
-    # RELACIÓN N:M (Semana 4, Ejercicio 4): un estudiante lleva muchos cursos
-    # y un curso tiene muchos estudiantes. Se usa "Curso"/"CursoEstudiante"
-    # como strings porque esas clases se definen más abajo en este archivo.
     cursos = models.ManyToManyField(
         "Curso",
         through="CursoEstudiante",   # la tabla intermedia guarda nota_final y estado
