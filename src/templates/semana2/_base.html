@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<a href="{% url 'semana2_listado' %}">Citas médicas</a>
+<a href="{% url 'semana2_profesionales' %}">Profesionales</a>
+<a href="{% url 'semana2_horarios' %}">Horarios</a>
+<a href="{% url 'hub' %}">← Menú principal</a>
+{% endblock %}

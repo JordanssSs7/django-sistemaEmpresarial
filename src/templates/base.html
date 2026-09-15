@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -153,6 +154,28 @@
             border-radius: 8px; font-size: 0.95rem; font-family: inherit;
         }
         .form-card .helptext { color: var(--text-muted); font-size: 0.82rem; }
+
+        /* Flujo de trabajo paso a paso (index de semana3) */
+        .workflow { display: flex; flex-direction: column; gap: 1rem; margin: 1.25rem 0; }
+        .workflow-step {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: var(--shadow);
+        }
+        .workflow-step-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; }
+        .workflow-step-header h3 { margin: 0; }
+        .step-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 1.8rem; height: 1.8rem; border-radius: 50%;
+            background: var(--accent); color: white; font-weight: 700; font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .workflow-items { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+        .workflow-item {
+            display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+            padding: 0.5rem 0.7rem; background: var(--bg); border-radius: 8px;
+        }
+        .workflow-item a:first-child { font-weight: 600; }
+        .workflow-item .btn { margin-left: auto; }
         .form-card .errorlist { color: #991b1b; font-size: 0.85rem; list-style: none; padding: 0; margin: 0.3rem 0 0; }
         .form-actions { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
         ul.errorlist { color: #991b1b; font-size: 0.9rem; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.8rem 1.2rem; margin: 0 0 1rem; }
@@ -178,17 +201,52 @@
         .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.82rem; }
         .acciones { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
         .inline-form { display: inline-block; margin: 0; }
+
+        /* Fondo temático "campus escolar" para la app semana3: foto real
+           (gorro de graduación, CC0/dominio público, semana3/static/semana3/img/)
+           atenuada con un velo claro para que el texto siga siendo legible. */
+        body.bg-escolar {
+            background-color: #eef1f9;
+            background-image:
+                linear-gradient(rgba(238,241,249,0.93), rgba(238,241,249,0.93)),
+                url("{% static 'semana3/img/fondo-escolar.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Banner de bienvenida (hero) del index de cada app: foto real de fondo
+           (aula de clases, CC0) con degradado oscuro encima para contraste. */
+        .hero {
+            display: flex; align-items: center; gap: 1.25rem;
+            background:
+                linear-gradient(135deg, rgba(30,41,59,0.82) 0%, rgba(59,91,219,0.82) 100%),
+                url("{% static 'semana3/img/estudiantes-aula.jpg' %}");
+            background-size: cover;
+            background-position: center 30%;
+            color: white; border-radius: 12px; padding: 1.75rem 2rem;
+            margin-bottom: 1.5rem; box-shadow: var(--shadow-hover, var(--shadow));
+        }
+        .hero .hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; }
+        .hero h2 { color: white; margin: 0 0 0.3rem; }
+        .hero p { margin: 0; opacity: 0.95; }
+
+        /* Ícono decorativo dentro de cada tarjeta/enlace de sección */
+        .section-icon { font-size: 1.15rem; margin-right: 0.4rem; }
+
+        /* Miniatura fotográfica junto a un enlace de sección */
+        .section-thumb {
+            width: 40px; height: 40px; border-radius: 8px; object-fit: cover;
+            margin-right: 0.6rem; flex-shrink: 0; box-shadow: var(--shadow);
+        }
     </style>
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <header>
         <div class="header-inner">
-            <h1>Sistema Empresarial</h1>
+            <h1><a href="{% url 'hub' %}" style="color:inherit; text-decoration:none;">Sistema Empresarial</a></h1>
             <nav>
-                <a href="{% url 'semana2_listado' %}">Citas médicas</a>
-                <a href="{% url 'semana2_profesionales' %}">Profesionales</a>
-                <a href="{% url 'semana2_horarios' %}">Horarios</a>
-                <a href="{% url 'item_list' %}">Semana 1 (otro proyecto)</a>
+                {% block nav %}{% endblock %}
             </nav>
         </div>
     </header>

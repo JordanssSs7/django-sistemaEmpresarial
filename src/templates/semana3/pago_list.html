@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "semana3/_base.html" %}
 
 {% block title %}Pagos{% endblock %}
 
 {% block content %}
-<h2>Pagos</h2>
+<h2>🧾 Pagos</h2>
 
 <div class="toolbar">
     <a class="chip {% if not f_estado %}active{% endif %}" href="{% url 'semana3:pago_list' %}">Todos</a>

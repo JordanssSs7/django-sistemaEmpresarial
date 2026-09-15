@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body_class %}bg-escolar{% endblock %}
+
+{% block nav %}
+<a href="{% url 'semana3:index' %}">Inicio</a>
+<a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a>
+<a href="{% url 'semana3:matricula_list' %}">Matrículas</a>
+<a href="{% url 'semana3:pension_list' %}">Pensiones</a>
+<a href="{% url 'semana3:pago_list' %}">Pagos</a>
+<a href="{% url 'hub' %}">← Menú principal</a>
+{% endblock %}

@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "semana3/_base.html" %}
 
 {% block title %}{{ titulo }}{% endblock %}
 
 {% block content %}
-<h2>{{ titulo }}</h2>
+<h2>📋 {{ titulo }}</h2>
 
 <form class="form-card" method="post" novalidate>
     {% csrf_token %}

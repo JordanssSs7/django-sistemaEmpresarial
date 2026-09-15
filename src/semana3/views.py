@@ -515,9 +515,31 @@ def estudiante_detalle(request, pk):
         pk=pk,
     )
     observaciones = estudiante.observaciones.all()   # related_name de Observacion (1:N)
+
+    # Historial de matrículas (una por año) con el avance de pago de cada una.
+    # prefetch_related("pensiones") trae TODAS las pensiones de TODAS las
+    # matrículas en una sola consulta aparte; por eso, dentro del for, usar
+    # m.pensiones.all() no dispara ninguna consulta nueva (ya está en caché).
+    historial = []
+    matriculas = (
+        estudiante.matriculas
+        .select_related("anio_lectivo", "grado")
+        .prefetch_related("pensiones")
+        .order_by("-anio_lectivo__anio")
+    )
+    for matricula in matriculas:
+        pensiones = list(matricula.pensiones.all())
+        pagadas = sum(1 for p in pensiones if p.estado_pago == "PAGADA")
+        historial.append({
+            "matricula": matricula,
+            "total_pensiones": len(pensiones),
+            "pagadas": pagadas,
+        })
+
     return render(request, "semana3/estudiante_detalle.html", {
         "estudiante": estudiante,
         "observaciones": observaciones,
+        "historial": historial,
     })
 
 
@@ -634,20 +656,25 @@ def matricula_editar(request, pk):
 # ---------------------------------------------------------------------------
 
 def pension_list(request):
-    """READ con filtro por estado_pago (Requisito 9: pagadas / pendientes / vencidas)."""
+    """READ con filtro por estado_pago (Requisito 9: pagadas / pendientes / vencidas)
+    y opcionalmente por matrícula (para ver solo las cuotas de un estudiante)."""
     estado = request.GET.get("estado", "")
+    matricula_id = request.GET.get("matricula", "")
 
     pensiones = Pension.objects.select_related(
         "matricula", "matricula__estudiante", "tipo_descuento"    # JOINs para mostrar datos relacionados
     ).all()
     if estado:
         pensiones = pensiones.filter(estado_pago=estado)                # WHERE estado_pago = ?
+    if matricula_id:
+        pensiones = pensiones.filter(matricula_id=matricula_id)         # WHERE matricula_id = ?
     pensiones = pensiones.order_by("fecha_vencimiento", "num_cuota")    # ORDER BY vencimiento, cuota
 
     return render(request, "semana3/pension_list.html", {
         "pensiones": pensiones,
         "estados": EstadoPension.choices,
         "f_estado": estado,
+        "f_matricula": matricula_id,
     })
 
 

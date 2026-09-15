@@ -1,26 +1,108 @@
-{% extends "base.html" %}
+{% extends "semana3/_base.html" %}
+{% load static %}
 
 {% block title %}Gestión Escolar - Semana 3{% endblock %}
 
 {% block content %}
-<h2>Sistema de Gestión de Matrículas y Pensiones</h2>
-<p>Módulo de la Semana 3 con persistencia en base de datos (Django ORM + SQLite).</p>
+<div class="hero">
+    <div class="hero-icon">🎓</div>
+    <div>
+        <h2>Sistema de Gestión de Matrículas y Pensiones</h2>
+        <p>Sigue el orden de los pasos de abajo: catálogos → personas → matrícula → cobranza.</p>
+    </div>
+</div>
 
-<h3>Catálogos (entidades independientes)</h3>
-<ul>
-    <li><a href="{% url 'semana3:nivel_list' %}">Niveles educativos</a></li>
-    <li><a href="{% url 'semana3:anio_list' %}">Años lectivos</a></li>
-    <li><a href="{% url 'semana3:descuento_list' %}">Tipos de descuento</a></li>
-    <li><a href="{% url 'semana3:metodo_list' %}">Métodos de pago</a></li>
-    <li><a href="{% url 'semana3:apoderado_list' %}">Apoderados</a></li>
-</ul>
+<div class="workflow">
+    <div class="workflow-step">
+        <div class="workflow-step-header">
+            <span class="step-number">1</span>
+            <h3>Configura los catálogos</h3>
+        </div>
+        <p class="empty-state">Datos base que no dependen de nada más. Cualquier orden.</p>
+        <div class="workflow-items">
+            <div class="workflow-item">
+                <a href="{% url 'semana3:nivel_list' %}"><span class="section-icon">🏫</span>Niveles educativos</a>
+                <a href="{% url 'semana3:nivel_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+            <div class="workflow-item">
+                <a href="{% url 'semana3:anio_list' %}"><span class="section-icon">📅</span>Años lectivos</a>
+                <a href="{% url 'semana3:anio_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+            <div class="workflow-item">
+                <a href="{% url 'semana3:descuento_list' %}"><span class="section-icon">🏷️</span>Tipos de descuento</a>
+                <a href="{% url 'semana3:descuento_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+            <div class="workflow-item">
+                <a href="{% url 'semana3:metodo_list' %}"><span class="section-icon">💳</span>Métodos de pago</a>
+                <a href="{% url 'semana3:metodo_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+            <div class="workflow-item">
+                <img src="{% static 'semana3/img/apoderados-familia.jpg' %}" alt="" class="section-thumb">
+                <a href="{% url 'semana3:apoderado_list' %}">Apoderados</a>
+                <a href="{% url 'semana3:apoderado_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+        </div>
+    </div>
 
-<h3>Entidades relacionadas (ForeignKey)</h3>
-<ul>
-    <li><a href="{% url 'semana3:grado_list' %}">Grados</a> &rarr; Nivel educativo</li>
-    <li><a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a> &rarr; Apoderado</li>
-    <li><a href="{% url 'semana3:matricula_list' %}">Matrículas</a> &rarr; Estudiante, Año lectivo, Grado</li>
-    <li><a href="{% url 'semana3:pension_list' %}">Pensiones</a> &rarr; Matrícula, Tipo de descuento</li>
-    <li><a href="{% url 'semana3:pago_list' %}">Pagos</a> &rarr; Pensión, Método de pago</li>
-</ul>
+    <div class="workflow-step">
+        <div class="workflow-step-header">
+            <span class="step-number">2</span>
+            <h3>Registra grados y estudiantes</h3>
+        </div>
+        <p class="empty-state">Un grado necesita un nivel educativo ya creado; un estudiante necesita un apoderado ya creado.</p>
+        <div class="workflow-items">
+            <div class="workflow-item">
+                <a href="{% url 'semana3:grado_list' %}"><span class="section-icon">📚</span>Grados</a> <small class="empty-state">(usa un Nivel)</small>
+                <a href="{% url 'semana3:grado_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+            <div class="workflow-item">
+                <img src="{% static 'semana3/img/estudiantes-aula.jpg' %}" alt="" class="section-thumb">
+                <a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a> <small class="empty-state">(usa un Apoderado)</small>
+                <a href="{% url 'semana3:estudiante_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="workflow-step">
+        <div class="workflow-step-header">
+            <span class="step-number">3</span>
+            <h3>Matricula al estudiante</h3>
+        </div>
+        <p class="empty-state">Elige estudiante + año lectivo + grado. Al guardar, se generan automáticamente las 10 pensiones (cuotas) de ese estudiante.</p>
+        <div class="workflow-items">
+            <div class="workflow-item">
+                <a href="{% url 'semana3:matricula_list' %}"><span class="section-icon">📝</span>Matrículas</a>
+                <a href="{% url 'semana3:matricula_crear' %}" class="btn btn-primary btn-sm">+ Nueva matrícula</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="workflow-step">
+        <div class="workflow-step-header">
+            <span class="step-number">4</span>
+            <h3>Cobra las pensiones</h3>
+        </div>
+        <p class="empty-state">Las pensiones ya existen desde el paso anterior. Aquí registras los pagos contra cada cuota.</p>
+        <div class="workflow-items">
+            <div class="workflow-item">
+                <a href="{% url 'semana3:pension_list' %}"><span class="section-icon">💵</span>Pensiones</a> <small class="empty-state">(se crean solas al matricular)</small>
+            </div>
+            <div class="workflow-item">
+                <img src="{% static 'semana3/img/pagos-monedas.jpg' %}" alt="" class="section-thumb">
+                <a href="{% url 'semana3:pago_list' %}">Pagos</a>
+                <a href="{% url 'semana3:pago_crear' %}" class="btn btn-primary btn-sm">+ Registrar pago</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3>Relaciones adicionales (Semana 4)</h3>
+<div class="workflow-items">
+    <div class="workflow-item">
+        <a href="{% url 'semana3:estudiante_list' %}"><span class="section-icon">🩺</span>Estudiantes</a> <small class="empty-state">→ ver detalle: ficha médica (1:1), historial de matrículas y observaciones (1:N)</small>
+    </div>
+    <div class="workflow-item">
+        <a href="{% url 'semana3:curso_list' %}"><span class="section-icon">📖</span>Cursos</a> <small class="empty-state">(N:M con estudiantes vía inscripción)</small>
+    </div>
+</div>
 {% endblock %}

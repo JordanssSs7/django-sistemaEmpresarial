@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "semana3/_base.html" %}
 
 {% block title %}Detalle de estudiante{% endblock %}
 
 {% block content %}
-<h2>{{ estudiante.nombres }} {{ estudiante.apellidos }}</h2>
+<h2>🎓 {{ estudiante.nombres }} {{ estudiante.apellidos }}</h2>
 
 <div class="form-card detail-card">
     <p><strong>Código:</strong> {{ estudiante.codigo_alumno }}</p>
@@ -30,6 +30,29 @@
     <div class="form-actions">
         <a href="{% url 'semana3:estudiante_list' %}" class="btn btn-secondary">Volver al listado</a>
     </div>
+</div>
+
+{# Historial de matrículas del estudiante: acceso inverso a Matricula (related_name="matriculas") #}
+<h3>Historial de matrículas</h3>
+<div class="table-wrap">
+    <table class="citas">
+        <thead>
+            <tr><th>Año lectivo</th><th>Grado</th><th>Estado</th><th>Pensiones pagadas</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            {% for item in historial %}
+            <tr>
+                <td>{{ item.matricula.anio_lectivo }}</td>
+                <td>{{ item.matricula.grado }}</td>
+                <td>{{ item.matricula.get_estado_matricula_display }}</td>
+                <td>{{ item.pagadas }} / {{ item.total_pensiones }}</td>
+                <td><a href="{% url 'semana3:pension_list' %}?matricula={{ item.matricula.id }}">Ver pensiones</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty-state">Sin matrículas registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {# Acceso INVERSO a la relación 1:N (Observacion -> Estudiante, related_name="observaciones") #}
