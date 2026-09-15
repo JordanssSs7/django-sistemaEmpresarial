@@ -17,9 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from .views import hub
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('semana2.urls')),
+    path('', hub, name='hub'),
     path('semana1/', include('semana1.urls')),
+    path('semana2/', include('semana2.urls')),
     path('semana3/', include('semana3.urls')),
 ]

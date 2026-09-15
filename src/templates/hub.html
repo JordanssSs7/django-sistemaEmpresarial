@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Menú principal{% endblock %}
+
+{% block nav %}{% endblock %}
+
+{% block content %}
+<h2>Elige un proyecto</h2>
+<div class="items-grid">
+    {% for proyecto in proyectos %}
+    <a href="{% url proyecto.url_name %}" class="item-card" style="text-decoration:none; color:inherit; display:block;">
+        <h3>{{ proyecto.titulo }} — {{ proyecto.subtitulo }}</h3>
+        <p>{{ proyecto.descripcion }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

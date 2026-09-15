@@ -104,16 +104,46 @@ class EstudianteForm(forms.ModelForm):
         }
 
 
+class EstudianteChoiceField(forms.ModelChoiceField):
+    """<select> de estudiantes que muestra también su apoderado en la
+    etiqueta, para que al matricular quede claro quién es el responsable
+    de pago sin tener que ir a consultarlo aparte."""
+
+    def label_from_instance(self, estudiante):
+        return f"{estudiante.nombres} {estudiante.apellidos} — Apoderado: {estudiante.apoderado.nombres} {estudiante.apoderado.apellidos}"
+
+
+class MatriculaChoiceField(forms.ModelChoiceField):
+    """<select> de matrículas que muestra estudiante + año + grado, para
+    saber a qué matrícula corresponde una pensión sin adivinar por el id."""
+
+    def label_from_instance(self, matricula):
+        return f"{matricula.estudiante.nombres} {matricula.estudiante.apellidos} — {matricula.anio_lectivo} — {matricula.grado}"
+
+
+class PensionChoiceField(forms.ModelChoiceField):
+    """<select> de pensiones que muestra el número de cuota y a quién
+    pertenece, para saber contra qué deuda se está registrando un pago."""
+
+    def label_from_instance(self, pension):
+        return f"Cuota {pension.num_cuota} — {pension.matricula.estudiante.nombres} {pension.matricula.estudiante.apellidos} (S/ {pension.monto_final or pension.monto_base})"
+
+
 class MatriculaForm(forms.ModelForm):
     """Formulario de Matrícula.
 
     `costo_matricula` NO está en `fields`: lo copia la vista `matricula_crear`
     del año lectivo elegido, no lo escribe el usuario.
     """
+    estudiante = EstudianteChoiceField(
+        queryset=Estudiante.objects.select_related("apoderado").all(),
+        label="Estudiante",
+    )
+
     class Meta:
         model = Matricula
         fields = [
-            "estudiante",         # desplegable de estudiantes
+            "estudiante",         # desplegable de estudiantes (con su apoderado en la etiqueta)
             "anio_lectivo",       # desplegable de años lectivos
             "grado",              # desplegable de grados
             "estado_matricula",   # VIGENTE / ANULADA / TRASLADADA
@@ -126,10 +156,15 @@ class PensionForm(forms.ModelForm):
     `monto_final` NO está en `fields`: lo calcula la vista aplicando el
     descuento sobre `monto_base` (Requisito 8).
     """
+    matricula = MatriculaChoiceField(
+        queryset=Matricula.objects.select_related("estudiante", "anio_lectivo", "grado").all(),
+        label="Matrícula",
+    )
+
     class Meta:
         model = Pension
         fields = [
-            "matricula",          # desplegable de matrículas
+            "matricula",          # desplegable de matrículas (con estudiante/año/grado en la etiqueta)
             "num_cuota",          # número de cuota (1-10)
             "monto_base",         # precio sin descuento
             "fecha_vencimiento",  # con calendario
@@ -156,10 +191,15 @@ class PagoForm(forms.ModelForm):
         input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"],
     )
 
+    pension = PensionChoiceField(
+        queryset=Pension.objects.select_related("matricula__estudiante").all(),
+        label="Pensión",
+    )
+
     class Meta:
         model = Pago
         fields = [
-            "pension",            # desplegable de pensiones (a qué cuota se abona)
+            "pension",            # desplegable de pensiones (con cuota + estudiante en la etiqueta)
             "num_operacion",      # nro de operación bancaria (único)
             "monto_pagado",
             "fecha_operacion",    # el campo redefinido arriba

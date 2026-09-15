@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "semana3/_base.html" %}
 
 {% block title %}Pensiones{% endblock %}
 
 {% block content %}
-<h2>Pensiones</h2>
+<h2>💵 Pensiones</h2>
 
 <div class="toolbar">
     <a class="chip {% if not f_estado %}active{% endif %}" href="{% url 'semana3:pension_list' %}">Todas</a>
