@@ -17,10 +17,9 @@ disponibles (usan el __str__ del modelo relacionado para las etiquetas).
 
 from django import forms   # trae forms.ModelForm, forms.DateInput, forms.DateTimeField, ...
 
-from .models import (      # los modelos sobre los que se construyen los formularios
+from .models import (      # los 10 modelos sobre los que se construyen los formularios
     AnioLectivo,
     Apoderado,
-    CursoEstudiante,       # modelo intermedio de la relación N:M Estudiante<->Curso
     Estudiante,
     Grado,
     Matricula,
@@ -206,22 +205,4 @@ class PagoForm(forms.ModelForm):
             "comprobante_url",    # enlace al voucher (opcional)
             "metodo_pago",        # desplegable de métodos de pago
             "estado_validacion",  # PENDIENTE / APROBADO / RECHAZADO / ANULADO
-        ]
-
-
-class CursoEstudianteForm(forms.ModelForm):
-    """Formulario del MODELO INTERMEDIO de la relación N:M Estudiante<->Curso.
-
-    No es un ManyToManyField "de un solo campo": al tener atributos propios
-    (nota_final, estado), la inscripción se gestiona como cualquier otra
-    entidad con FK, con su propio CRUD. `fecha_inscripcion` no está en
-    `fields` porque es `auto_now_add=True` (Django la pone sola al crear).
-    """
-    class Meta:
-        model = CursoEstudiante
-        fields = [
-            "estudiante",   # desplegable de estudiantes
-            "curso",        # desplegable de cursos
-            "nota_final",   # opcional: se llena cuando el curso termina
-            "estado",       # CURSANDO / APROBADO / DESAPROBADO / RETIRADO
         ]

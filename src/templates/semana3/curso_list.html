@@ -5,8 +5,6 @@
 {% block content %}
 <h2>📖 Cursos</h2>
 
-<p><a class="btn btn-primary" href="{% url 'semana3:inscripcion_crear' %}">+ Inscribir estudiante</a></p>
-
 {# Recorrido del modelo intermedio CursoEstudiante (N:M Estudiante<->Curso),
    traído con prefetch_related() para evitar una consulta por cada curso. #}
 {% for curso in cursos %}
@@ -15,7 +13,7 @@
     <div class="table-wrap">
         <table class="citas">
             <thead>
-                <tr><th>Estudiante</th><th>Fecha de inscripción</th><th>Nota final</th><th>Estado</th><th>Acciones</th></tr>
+                <tr><th>Estudiante</th><th>Fecha de inscripción</th><th>Nota final</th><th>Estado</th></tr>
             </thead>
             <tbody>
                 {% for inscripcion in curso.inscripciones_curso.all %}
@@ -24,13 +22,9 @@
                     <td>{{ inscripcion.fecha_inscripcion|date:"d/m/Y" }}</td>
                     <td>{{ inscripcion.nota_final|default:"—" }}</td>
                     <td>{{ inscripcion.get_estado_display }}</td>
-                    <td>
-                        <a href="{% url 'semana3:inscripcion_editar' inscripcion.id %}">Editar</a> ·
-                        <a href="{% url 'semana3:inscripcion_eliminar' inscripcion.id %}">Eliminar</a>
-                    </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5" class="empty-state">Sin estudiantes inscritos.</td></tr>
+                <tr><td colspan="4" class="empty-state">Sin estudiantes inscritos.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

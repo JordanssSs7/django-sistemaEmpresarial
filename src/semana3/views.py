@@ -33,7 +33,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import (
     AnioLectivoForm,
     ApoderadoForm,
-    CursoEstudianteForm,   # formulario del modelo intermedio (Ejercicio 13)
     EstudianteForm,
     GradoForm,
     MatriculaForm,
@@ -48,7 +47,6 @@ from .models import (
     AnioLectivo,
     Apoderado,
     Curso,
-    CursoEstudiante,       # modelo intermedio de la relación N:M Estudiante<->Curso
     EstadoEstudiante,
     EstadoMatricula,
     EstadoPago,
@@ -555,59 +553,6 @@ def curso_list(request):
     """
     cursos = Curso.objects.prefetch_related("inscripciones_curso__estudiante")
     return render(request, "semana3/curso_list.html", {"cursos": cursos})
-
-
-# ---------------------------------------------------------------------------
-# CRUD del MODELO INTERMEDIO CursoEstudiante  (Semana 4, Ejercicio 13)
-# ---------------------------------------------------------------------------
-# Es el mismo patrón CREATE/UPDATE/DELETE que ya usan las demás entidades:
-# CursoEstudiante es una tabla como cualquier otra (solo que representa una
-# relación N:M), así que se gestiona con las mismas herramientas del ORM.
-
-def inscripcion_crear(request):
-    """CREATE: inscribe a un estudiante en un curso (agrega un elemento a la
-    relación N:M, con sus atributos propios: nota_final y estado)."""
-    if request.method == "POST":
-        form = CursoEstudianteForm(request.POST)
-        if form.is_valid():
-            form.save()   # INSERT en semana3_cursoestudiante (estudiante_id, curso_id, ...)
-            messages.success(request, "Estudiante inscrito al curso correctamente.")
-            return redirect("semana3:curso_list")
-        # si `unique_together("estudiante", "curso")` se viola (ya estaba inscrito),
-        # is_valid() devuelve False y el formulario vuelve con el error mostrado.
-    else:
-        form = CursoEstudianteForm()
-    return render(request, "semana3/form.html", {
-        "form": form,
-        "titulo": "Inscribir estudiante a un curso",
-        "volver": "semana3:curso_list",
-    })
-
-
-def inscripcion_editar(request, pk):
-    """UPDATE: modifica una inscripción existente (ej. cambiar `estado` a
-    Aprobado/Desaprobado y registrar la `nota_final` al cerrar el curso)."""
-    inscripcion = get_object_or_404(CursoEstudiante, pk=pk)
-    if request.method == "POST":
-        form = CursoEstudianteForm(request.POST, instance=inscripcion)
-        if form.is_valid():
-            form.save()   # UPDATE ... WHERE id = pk
-            messages.success(request, "Inscripción actualizada correctamente.")
-            return redirect("semana3:curso_list")
-    else:
-        form = CursoEstudianteForm(instance=inscripcion)   # form precargado
-    return render(request, "semana3/form.html", {
-        "form": form,
-        "titulo": f"Editar inscripción: {inscripcion}",
-        "volver": "semana3:curso_list",
-    })
-
-
-def inscripcion_eliminar(request, pk):
-    """DELETE: quita a un estudiante de un curso (elimina la fila de la
-    tabla intermedia; NO borra ni al Estudiante ni al Curso)."""
-    return _eliminar(request, get_object_or_404(CursoEstudiante, pk=pk),
-                     "semana3:curso_list", "Inscripción")
 
 
 # ---------------------------------------------------------------------------
