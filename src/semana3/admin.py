@@ -50,8 +50,15 @@ admin.site.register(models.CursoEstudiante) # modelo intermedio de la relación 
 
 class FichaMedicaInline(admin.StackedInline):
     model = models.FichaMedica
-    extra = 0     # no ofrecer formularios extra en blanco: 1:1 = a lo sumo 1
-    max_num = 1   # refuerza en el propio Admin que no puede haber más de una
+    extra = 0
+    max_num = 1
+
+
+# Ejercicio 7: TabularInline del modelo intermedio N:M (filas, no un solo bloque)
+class CursoEstudianteInline(admin.TabularInline):
+    model = models.CursoEstudiante
+    extra = 1
+    fields = ("curso", "nota_final", "estado")   # fecha_inscripcion es auto_now_add, no editable
 
 
 @admin.register(models.Estudiante)
@@ -60,11 +67,8 @@ class EstudianteAdmin(admin.ModelAdmin):
     de un vistazo, sin entrar a cada registro."""
     list_display = ("codigo_alumno", "nombres", "apellidos", "estado", "apoderado")
     search_fields = ("nombres", "apellidos", "num_documento", "codigo_alumno")
-    # Ejercicio 5: panel lateral para filtrar rápido por estado
-    # (Activo / Inactivo / Retirado) sin escribir nada.
     list_filter = ("estado",)
-    # Ejercicio 6: la ficha médica del estudiante se edita en la misma pantalla.
-    inlines = [FichaMedicaInline]
+    inlines = [FichaMedicaInline, CursoEstudianteInline]
 
 
 @admin.register(models.Observacion)
