@@ -28,9 +28,13 @@
             <td>{{ pension.id }}</td>
             <td>{{ pension.matricula }}</td>
             <td>{{ pension.num_cuota }}</td>
-            <td>S/ {{ pension.monto_base }}</td>
+            <td>S/ {{ pension.monto_base|floatformat:2 }}</td>
             <td>{{ pension.tipo_descuento.nombre|default:"—" }}</td>
-            <td>S/ {{ pension.monto_final }}</td>
+            {# "Monto final" puede ser menor que "Monto base" cuando la pensión
+               tiene un tipo_descuento aplicado. El cálculo ya viene hecho desde
+               la vista (pension_crear/pension_editar en views.py); aquí solo
+               se muestra el resultado guardado, no se resta nada en el Template. #}
+            <td>S/ {{ pension.monto_final|floatformat:2 }}</td>
             <td>{{ pension.fecha_vencimiento|date:"d/m/Y" }}</td>
             <td>{{ pension.get_estado_pago_display }}</td>
             <td>
