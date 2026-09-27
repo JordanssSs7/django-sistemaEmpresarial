@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'semana3/css/semana3.css' %}">
+{% endblock %}
 
 {% block body_class %}bg-escolar{% endblock %}
 

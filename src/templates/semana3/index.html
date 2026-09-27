@@ -1,11 +1,11 @@
 {% extends "semana3/_base.html" %}
 {% load static %}
 
-{% block title %}Gestión Escolar - Semana 3{% endblock %}
+{% block title %}Gestión Escolar{% endblock %}
 
 {% block content %}
 <div class="hero">
-    <div class="hero-icon">🎓</div>
+    <div class="hero-icon"><i class="bi bi-mortarboard-fill"></i></div>
     <div>
         <h2>Sistema de Gestión de Matrículas y Pensiones</h2>
         <p>Sigue el orden de los pasos de abajo: catálogos → personas → matrícula → cobranza.</p>
@@ -21,19 +21,19 @@
         <p class="empty-state">Datos base que no dependen de nada más. Cualquier orden.</p>
         <div class="workflow-items">
             <div class="workflow-item">
-                <a href="{% url 'semana3:nivel_list' %}"><span class="section-icon">🏫</span>Niveles educativos</a>
+                <a href="{% url 'semana3:nivel_list' %}"><span class="section-icon"><i class="bi bi-building"></i></span>Niveles educativos</a>
                 <a href="{% url 'semana3:nivel_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
             </div>
             <div class="workflow-item">
-                <a href="{% url 'semana3:anio_list' %}"><span class="section-icon">📅</span>Años lectivos</a>
+                <a href="{% url 'semana3:anio_list' %}"><span class="section-icon"><i class="bi bi-calendar3"></i></span>Años lectivos</a>
                 <a href="{% url 'semana3:anio_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
             </div>
             <div class="workflow-item">
-                <a href="{% url 'semana3:descuento_list' %}"><span class="section-icon">🏷️</span>Tipos de descuento</a>
+                <a href="{% url 'semana3:descuento_list' %}"><span class="section-icon"><i class="bi bi-percent"></i></span>Tipos de descuento</a>
                 <a href="{% url 'semana3:descuento_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
             </div>
             <div class="workflow-item">
-                <a href="{% url 'semana3:metodo_list' %}"><span class="section-icon">💳</span>Métodos de pago</a>
+                <a href="{% url 'semana3:metodo_list' %}"><span class="section-icon"><i class="bi bi-credit-card-2-front-fill"></i></span>Métodos de pago</a>
                 <a href="{% url 'semana3:metodo_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
             </div>
             <div class="workflow-item">
@@ -49,15 +49,15 @@
             <span class="step-number">2</span>
             <h3>Registra grados y estudiantes</h3>
         </div>
-        <p class="empty-state">Un grado necesita un nivel educativo ya creado; un estudiante necesita un apoderado ya creado.</p>
+        <p class="empty-state">Registra los grados que dicta el colegio y da de alta a los estudiantes.</p>
         <div class="workflow-items">
             <div class="workflow-item">
-                <a href="{% url 'semana3:grado_list' %}"><span class="section-icon">📚</span>Grados</a> <small class="empty-state">(usa un Nivel)</small>
+                <a href="{% url 'semana3:grado_list' %}"><span class="section-icon"><i class="bi bi-bar-chart-steps"></i></span>Grados</a>
                 <a href="{% url 'semana3:grado_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
             </div>
             <div class="workflow-item">
                 <img src="{% static 'semana3/img/estudiantes-aula.jpg' %}" alt="" class="section-thumb">
-                <a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a> <small class="empty-state">(usa un Apoderado)</small>
+                <a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a>
                 <a href="{% url 'semana3:estudiante_crear' %}" class="btn btn-primary btn-sm">+ Nuevo</a>
             </div>
         </div>
@@ -71,7 +71,7 @@
         <p class="empty-state">Elige estudiante + año lectivo + grado. Al guardar, se generan automáticamente las 10 pensiones (cuotas) de ese estudiante.</p>
         <div class="workflow-items">
             <div class="workflow-item">
-                <a href="{% url 'semana3:matricula_list' %}"><span class="section-icon">📝</span>Matrículas</a>
+                <a href="{% url 'semana3:matricula_list' %}"><span class="section-icon"><i class="bi bi-journal-check"></i></span>Matrículas</a>
                 <a href="{% url 'semana3:matricula_crear' %}" class="btn btn-primary btn-sm">+ Nueva matrícula</a>
             </div>
         </div>
@@ -85,7 +85,7 @@
         <p class="empty-state">Las pensiones ya existen desde el paso anterior. Aquí registras los pagos contra cada cuota.</p>
         <div class="workflow-items">
             <div class="workflow-item">
-                <a href="{% url 'semana3:pension_list' %}"><span class="section-icon">💵</span>Pensiones</a> <small class="empty-state">(se crean solas al matricular)</small>
+                <a href="{% url 'semana3:pension_list' %}"><span class="section-icon"><i class="bi bi-cash-stack"></i></span>Pensiones</a> <small class="empty-state">(se crean solas al matricular)</small>
             </div>
             <div class="workflow-item">
                 <img src="{% static 'semana3/img/pagos-monedas.jpg' %}" alt="" class="section-thumb">
@@ -96,13 +96,13 @@
     </div>
 </div>
 
-<h3>Relaciones adicionales (Semana 4)</h3>
+<h3>Seguimiento del estudiante</h3>
 <div class="workflow-items">
     <div class="workflow-item">
-        <a href="{% url 'semana3:estudiante_list' %}"><span class="section-icon">🩺</span>Estudiantes</a> <small class="empty-state">→ ver detalle: ficha médica (1:1), historial de matrículas y observaciones (1:N)</small>
+        <a href="{% url 'semana3:estudiante_list' %}"><span class="section-icon"><i class="bi bi-person-vcard-fill"></i></span>Estudiantes</a> <small class="empty-state">consulta su ficha médica, historial de matrículas y observaciones</small>
     </div>
     <div class="workflow-item">
-        <a href="{% url 'semana3:curso_list' %}"><span class="section-icon">📖</span>Cursos</a> <small class="empty-state">(N:M con estudiantes vía inscripción)</small>
+        <a href="{% url 'semana3:curso_list' %}"><span class="section-icon"><i class="bi bi-book-fill"></i></span>Cursos</a> <small class="empty-state">revisa los estudiantes inscritos y sus notas</small>
     </div>
 </div>
 {% endblock %}

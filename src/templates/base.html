@@ -5,246 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Sistema Empresarial{% endblock %}</title>
-    <style>
-        :root {
-            --bg: #f2f4f7;
-            --surface: #ffffff;
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-hover: 0 10px 20px rgba(0,0,0,0.08), 0 3px 6px rgba(0,0,0,0.05);
-        }
-        * { box-sizing: border-box; }
-        body {
-            font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0;
-            background: var(--bg);
-            color: #1f2937;
-        }
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1.1rem 1.5rem;
-        }
-        header .header-inner {
-            max-width: 1000px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 0.5rem;
-        }
-        header h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
-        nav a {
-            color: #e5e7eb; text-decoration: none; margin-left: 1rem;
-            font-size: 0.95rem; transition: color 0.15s ease;
-        }
-        nav a:hover { color: white; }
-        main {
-            padding: 1.5rem; max-width: 1000px; margin: 1.5rem auto;
-        }
-        footer {
-            text-align: center; font-size: 0.85rem; color: var(--text-muted); padding: 1.5rem;
-        }
-        a { color: var(--accent); }
-        h1, h2, h3 { color: var(--primary); }
-
-        /* Barra de búsqueda */
-        .search-bar {
-            width: 100%; padding: 0.65rem 1rem; margin-bottom: 1.25rem;
-            border: 1px solid var(--border); border-radius: 8px;
-            font-size: 1rem; background: var(--surface);
-            box-shadow: var(--shadow);
-        }
-        .search-bar:focus { outline: none; border-color: var(--accent); }
-
-        /* Catálogo en tarjetas */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1rem;
-        }
-        .item-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.1rem;
-            box-shadow: var(--shadow);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .item-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-        .item-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
-        .item-card p { margin: 0 0 0.6rem; color: #374151; font-size: 0.92rem; }
-        .item-card small { color: var(--text-muted); }
-        .empty-state { color: var(--text-muted); font-style: italic; }
-
-        /* Página de demo de la API */
-        pre.api-output {
-            background: #0f172a; color: #e2e8f0; padding: 1rem;
-            border-radius: 8px; overflow-x: auto; font-size: 0.85rem;
-        }
-
-        /* Mensajes de confirmación */
-        .messages { list-style: none; padding: 0; margin: 0 0 1.25rem; }
-        .messages li {
-            padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.92rem;
-            background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
-        }
-
-        /* Barra de filtros y resumen del listado */
-        .toolbar {
-            display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .toolbar .spacer { flex: 1; }
-        .chip {
-            display: inline-block; padding: 0.35rem 0.8rem; border-radius: 999px;
-            font-size: 0.85rem; text-decoration: none;
-            background: var(--surface); border: 1px solid var(--border); color: #374151;
-        }
-        .chip.active { background: var(--accent); border-color: var(--accent); color: white; }
-        .count-badge {
-            background: var(--primary); color: white; border-radius: 999px;
-            padding: 0.35rem 0.8rem; font-size: 0.85rem; font-weight: 600;
-        }
-
-        /* Tabla de citas */
-        .table-wrap { overflow-x: auto; }
-        table.citas {
-            width: 100%; border-collapse: collapse; background: var(--surface);
-            border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-            box-shadow: var(--shadow); font-size: 0.9rem;
-        }
-        table.citas th, table.citas td {
-            padding: 0.7rem 0.9rem; text-align: left; border-bottom: 1px solid var(--border);
-        }
-        table.citas th { background: #f8fafc; color: var(--primary); font-weight: 600; }
-        table.citas tr:last-child td { border-bottom: none; }
-        tr.prioritaria { background: #fff7ed; }
-
-        /* Etiquetas de estado y prioridad */
-        .badge {
-            display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
-            font-size: 0.78rem; font-weight: 600;
-        }
-        .badge-programada { background: #dbeafe; color: #1e40af; }
-        .badge-atendida   { background: #dcfce7; color: #166534; }
-        .badge-cancelada  { background: #fee2e2; color: #991b1b; }
-        .badge-prioridad  { background: #f59e0b; color: #1f2937; }
-
-        /* Botones y formulario */
-        .btn {
-            display: inline-block; padding: 0.6rem 1.1rem; border-radius: 8px;
-            font-size: 0.92rem; text-decoration: none; border: none; cursor: pointer;
-        }
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-secondary { background: var(--surface); color: #374151; border: 1px solid var(--border); }
-        .form-card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 10px; padding: 1.5rem; box-shadow: var(--shadow);
-            max-width: 560px;
-        }
-        .form-card p { margin: 0 0 1rem; }
-        .form-card label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: var(--primary); }
-        .form-card input[type="text"], .form-card input[type="date"],
-        .form-card input[type="time"], .form-card select, .form-card textarea {
-            width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--border);
-            border-radius: 8px; font-size: 0.95rem; font-family: inherit;
-        }
-        .form-card .helptext { color: var(--text-muted); font-size: 0.82rem; }
-
-        /* Flujo de trabajo paso a paso (index de semana3) */
-        .workflow { display: flex; flex-direction: column; gap: 1rem; margin: 1.25rem 0; }
-        .workflow-step {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: var(--shadow);
-        }
-        .workflow-step-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; }
-        .workflow-step-header h3 { margin: 0; }
-        .step-number {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 1.8rem; height: 1.8rem; border-radius: 50%;
-            background: var(--accent); color: white; font-weight: 700; font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        .workflow-items { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
-        .workflow-item {
-            display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
-            padding: 0.5rem 0.7rem; background: var(--bg); border-radius: 8px;
-        }
-        .workflow-item a:first-child { font-weight: 600; }
-        .workflow-item .btn { margin-left: auto; }
-        .form-card .errorlist { color: #991b1b; font-size: 0.85rem; list-style: none; padding: 0; margin: 0.3rem 0 0; }
-        .form-actions { display: flex; gap: 0.6rem; margin-top: 1rem; flex-wrap: wrap; }
-        ul.errorlist { color: #991b1b; font-size: 0.9rem; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.8rem 1.2rem; margin: 0 0 1rem; }
-        .detail-card p { margin: 0 0 0.6rem; }
-
-        /* Barra de filtros del listado */
-        .filter-bar {
-            display: flex; flex-wrap: wrap; align-items: end; gap: 1rem;
-            margin-bottom: 1rem; padding: 0.9rem 1rem;
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 10px; box-shadow: var(--shadow);
-        }
-        .filter-bar label {
-            display: flex; flex-direction: column; gap: 0.3rem;
-            font-size: 0.82rem; color: var(--text-muted); font-weight: 600;
-        }
-        .filter-bar select, .filter-bar input[type="date"] {
-            padding: 0.45rem 0.6rem; border: 1px solid var(--border);
-            border-radius: 6px; font-size: 0.9rem; font-family: inherit;
-        }
-
-        /* Botones pequeños y formularios inline dentro de una celda */
-        .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.82rem; }
-        .acciones { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
-        .inline-form { display: inline-block; margin: 0; }
-
-        /* Fondo temático "campus escolar" para la app semana3: foto real
-           (gorro de graduación, CC0/dominio público, semana3/static/semana3/img/)
-           atenuada con un velo claro para que el texto siga siendo legible. */
-        body.bg-escolar {
-            background-color: #eef1f9;
-            background-image:
-                linear-gradient(rgba(238,241,249,0.93), rgba(238,241,249,0.93)),
-                url("{% static 'semana3/img/fondo-escolar.jpg' %}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        /* Banner de bienvenida (hero) del index de cada app: foto real de fondo
-           (aula de clases, CC0) con degradado oscuro encima para contraste. */
-        .hero {
-            display: flex; align-items: center; gap: 1.25rem;
-            background:
-                linear-gradient(135deg, rgba(30,41,59,0.82) 0%, rgba(59,91,219,0.82) 100%),
-                url("{% static 'semana3/img/estudiantes-aula.jpg' %}");
-            background-size: cover;
-            background-position: center 30%;
-            color: white; border-radius: 12px; padding: 1.75rem 2rem;
-            margin-bottom: 1.5rem; box-shadow: var(--shadow-hover, var(--shadow));
-        }
-        .hero .hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; }
-        .hero h2 { color: white; margin: 0 0 0.3rem; }
-        .hero p { margin: 0; opacity: 0.95; }
-
-        /* Ícono decorativo dentro de cada tarjeta/enlace de sección */
-        .section-icon { font-size: 1.15rem; margin-right: 0.4rem; }
-
-        /* Miniatura fotográfica junto a un enlace de sección */
-        .section-thumb {
-            width: 40px; height: 40px; border-radius: 8px; object-fit: cover;
-            margin-right: 0.6rem; flex-shrink: 0; box-shadow: var(--shadow);
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    {# CSS compartido por todo el proyecto (antes iba inline en un <style>) #}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
+    {# Ejercicio 2 (Semana 6): Encabezado común del sitio #}
     <header>
         <div class="header-inner">
-            <h1><a href="{% url 'hub' %}" style="color:inherit; text-decoration:none;">Sistema Empresarial</a></h1>
+            <div class="brand">
+                <h1><a href="{% url 'hub' %}" style="color:inherit; text-decoration:none;">Sistema Empresarial</a></h1>
+                <span class="tagline">Laboratorios de Desarrollo de Aplicaciones Empresariales</span>
+            </div>
+            {# Menú: cada app lo llena a su manera vía {% block nav %} en su propio _base.html #}
             <nav>
                 {% block nav %}{% endblock %}
             </nav>
@@ -258,10 +32,15 @@
             {% endfor %}
         </ul>
         {% endif %}
+        {# Ejercicio 2: bloque de contenido vacío que cada Template hijo sobrescribe #}
         {% block content %}{% endblock %}
     </main>
+    {# Ejercicio 2: pie de página común del sitio #}
     <footer>
         &copy; {% now "Y" %} - Proyecto de laboratorio
+        <div class="footer-links">
+            <a href="{% url 'hub' %}">Menú principal</a>
+        </div>
     </footer>
 </body>
 </html>

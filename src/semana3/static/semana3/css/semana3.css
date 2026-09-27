@@ -1,0 +1,61 @@
+/* ============================================================
+   Estilos propios de la app "semana3" (Gestión de Matrículas y Pensiones)
+   No se cargan en semana1 ni semana2 - solo en semana3/_base.html
+   ============================================================ */
+
+/* Usado en TODAS las páginas de semana3 (la clase la pone
+   semana3/_base.html vía {% block body_class %}bg-escolar{% endblock %}) */
+body.bg-escolar {
+    background-color: #eef1f9;
+    background-image:
+        linear-gradient(rgba(238,241,249,0.93), rgba(238,241,249,0.93)),
+        url("/static/semana3/img/fondo-escolar.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* Usado en index.html: banner de bienvenida (hero) */
+.hero {
+    display: flex; align-items: center; gap: 1.25rem;
+    background:
+        linear-gradient(135deg, rgba(30,41,59,0.82) 0%, rgba(59,91,219,0.82) 100%),
+        url("/static/semana3/img/estudiantes-aula.jpg");
+    background-size: cover;
+    background-position: center 30%;
+    color: white; border-radius: 12px; padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem; box-shadow: 0 10px 20px rgba(0,0,0,0.08), 0 3px 6px rgba(0,0,0,0.05);
+}
+.hero .hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; }
+.hero h2 { color: white; margin: 0 0 0.3rem; }
+.hero p { margin: 0; opacity: 0.95; }
+
+/* Usado en index.html: los 4 pasos del flujo de trabajo */
+.workflow { display: flex; flex-direction: column; gap: 1rem; margin: 1.25rem 0; }
+.workflow-step {
+    background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 10px; padding: 1.1rem 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+.workflow-step-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.3rem; }
+.workflow-step-header h3 { margin: 0; }
+.step-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.8rem; height: 1.8rem; border-radius: 50%;
+    background: #3498db; color: white; font-weight: 700; font-size: 0.9rem;
+    flex-shrink: 0;
+}
+.workflow-items { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+.workflow-item {
+    display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    padding: 0.5rem 0.7rem; background: #f2f4f7; border-radius: 8px;
+}
+.workflow-item a:first-child { font-weight: 600; }
+.workflow-item .btn { margin-left: auto; }
+
+/* Usado en index.html: ícono/miniatura junto a cada enlace de sección */
+.section-icon { font-size: 1.15rem; margin-right: 0.4rem; }
+.section-thumb {
+    width: 40px; height: 40px; border-radius: 8px; object-fit: cover;
+    margin-right: 0.6rem; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}

@@ -60,7 +60,7 @@ class CursoEstudianteInline(admin.TabularInline):
     extra = 1
     fields = ("curso", "nota_final", "estado")   # fecha_inscripcion es auto_now_add, no editable
 
-
+#-personalizar modelo-
 @admin.register(models.Estudiante)
 class EstudianteAdmin(admin.ModelAdmin):
     """Entidad principal: se ve código, nombre completo, estado y apoderado

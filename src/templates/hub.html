@@ -8,9 +8,12 @@
 <h2>Elige un proyecto</h2>
 <div class="items-grid">
     {% for proyecto in proyectos %}
-    <a href="{% url proyecto.url_name %}" class="item-card" style="text-decoration:none; color:inherit; display:block;">
-        <h3>{{ proyecto.titulo }} — {{ proyecto.subtitulo }}</h3>
-        <p>{{ proyecto.descripcion }}</p>
+    <a href="{% url proyecto.url_name %}" class="project-card" style="--card-accent: {{ proyecto.color }};">
+        <span class="project-icon"><i class="bi {{ proyecto.icono }}"></i></span>
+        <h3>{{ proyecto.titulo }}</h3>
+        <p class="project-subtitulo">{{ proyecto.subtitulo }}</p>
+        <p class="project-desc">{{ proyecto.descripcion }}</p>
+        <span class="project-cta">Entrar <span class="arrow">→</span></span>
     </a>
     {% endfor %}
 </div>
