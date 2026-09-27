@@ -1,0 +1,12 @@
+{% comment %}
+  Celda de acciones reutilizable para los listados de semana3.
+  Uso: {% include "semana3/partials/_acciones.html" with prefijo="anio" obj_id=anio.id %}
+  Opcional: ver=True agrega el enlace "Ver" (usa la ruta <prefijo>_detalle).
+{% endcomment %}
+{% with ruta_editar="semana3:"|add:prefijo|add:"_editar" ruta_eliminar="semana3:"|add:prefijo|add:"_eliminar" ruta_detalle="semana3:"|add:prefijo|add:"_detalle" %}
+<td>
+    {% if ver %}<a href="{% url ruta_detalle obj_id %}">Ver</a> ·{% endif %}
+    <a href="{% url ruta_editar obj_id %}">Editar</a> ·
+    <a href="{% url ruta_eliminar obj_id %}">Eliminar</a>
+</td>
+{% endwith %}

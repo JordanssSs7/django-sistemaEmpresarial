@@ -18,10 +18,7 @@
             <td>{{ nivel.id }}</td>
             <td>{{ nivel.nombre_nivel }}</td>
             <td>{{ nivel.descripcion|default:"—" }}</td>
-            <td>
-                <a href="{% url 'semana3:nivel_editar' nivel.id %}">Editar</a> ·
-                <a href="{% url 'semana3:nivel_eliminar' nivel.id %}">Eliminar</a>
-            </td>
+            {% include "semana3/partials/_acciones.html" with prefijo="nivel" obj_id=nivel.id %}
         </tr>
         {% empty %}
         <tr><td colspan="4" class="empty-state">Sin registros.</td></tr>

@@ -18,10 +18,7 @@
             <td>{{ metodo.id }}</td>
             <td>{{ metodo.nombre_metodo }}</td>
             <td>{{ metodo.requiere_voucher|yesno:"Sí,No" }}</td>
-            <td>
-                <a href="{% url 'semana3:metodo_editar' metodo.id %}">Editar</a> ·
-                <a href="{% url 'semana3:metodo_eliminar' metodo.id %}">Eliminar</a>
-            </td>
+            {% include "semana3/partials/_acciones.html" with prefijo="metodo" obj_id=metodo.id %}
         </tr>
         {% empty %}
         <tr><td colspan="4" class="empty-state">Sin registros.</td></tr>

@@ -25,10 +25,7 @@
             <td>S/ {{ anio.costo_matricula }}</td>
             <td>S/ {{ anio.monto_pension }}</td>
             <td>{{ anio.get_estado_display }}</td>
-            <td>
-                <a href="{% url 'semana3:anio_editar' anio.id %}">Editar</a> ·
-                <a href="{% url 'semana3:anio_eliminar' anio.id %}">Eliminar</a>
-            </td>
+            {% include "semana3/partials/_acciones.html" with prefijo="anio" obj_id=anio.id %}
         </tr>
         {% empty %}
         <tr><td colspan="8" class="empty-state">Sin registros.</td></tr>

@@ -25,10 +25,7 @@
             <td>{{ descuento.nombre }}</td>
             <td>{{ descuento.porcentaje }}%</td>
             <td>{{ descuento.activo|yesno:"Sí,No" }}</td>
-            <td>
-                <a href="{% url 'semana3:descuento_editar' descuento.id %}">Editar</a> ·
-                <a href="{% url 'semana3:descuento_eliminar' descuento.id %}">Eliminar</a>
-            </td>
+            {% include "semana3/partials/_acciones.html" with prefijo="descuento" obj_id=descuento.id %}
         </tr>
         {% empty %}
         <tr><td colspan="5" class="empty-state">Sin registros.</td></tr>

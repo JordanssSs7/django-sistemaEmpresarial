@@ -18,10 +18,7 @@
             <td>{{ grado.id }}</td>
             <td>{{ grado.nombre_grado }}</td>
             <td>{{ grado.nivel.nombre_nivel }}</td>
-            <td>
-                <a href="{% url 'semana3:grado_editar' grado.id %}">Editar</a> ·
-                <a href="{% url 'semana3:grado_eliminar' grado.id %}">Eliminar</a>
-            </td>
+            {% include "semana3/partials/_acciones.html" with prefijo="grado" obj_id=grado.id %}
         </tr>
         {% empty %}
         <tr><td colspan="4" class="empty-state">Sin registros.</td></tr>

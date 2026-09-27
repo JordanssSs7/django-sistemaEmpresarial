@@ -37,10 +37,8 @@
             <td>S/ {{ pension.monto_final|floatformat:2 }}</td>
             <td>{{ pension.fecha_vencimiento|date:"d/m/Y" }}</td>
             <td>{{ pension.get_estado_pago_display }}</td>
-            <td>
-                <a href="{% url 'semana3:pension_editar' pension.id %}">Editar</a> ·
-                <a href="{% url 'semana3:pension_eliminar' pension.id %}">Eliminar</a>
-            </td>
+            {# Celda Editar/Eliminar reutilizada desde partials/_acciones.html en vez de repetir el HTML. #}
+            {% include "semana3/partials/_acciones.html" with prefijo="pension" obj_id=pension.id %}
         </tr>
         {% empty %}
         <tr><td colspan="9" class="empty-state">Sin registros.</td></tr>
