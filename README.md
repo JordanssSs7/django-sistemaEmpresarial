@@ -170,6 +170,23 @@ de aceptarlo.
    formato JSON, junto con el enlace **"Demo API"** en la cabecera del sitio, que consume esos
    datos mediante `fetch` en la página `/api-demo/`.
 
+## 🧱 Semana 6 — Refactorización de Templates
+
+Se refactorizaron los Templates de `semana3` (Sistema de Matrículas y Pensiones) y de la
+investigación propia, sin cambiar su comportamiento ni sus URLs:
+
+- **Herencia**: todos los Templates heredan de `base.html` mediante `extends`/`block`, a
+  través de un `_base.html` propio de cada app.
+- **Filtros**: se aplicaron `date`, `floatformat`, `default`, `yesno`, entre otros, sobre
+  campos ya mostrados.
+- **Comentarios**: se documentaron con `{# #}` las secciones que muestran relaciones
+  (1:1, 1:N, N:M) y cálculos derivados.
+- **Reutilización con `{% include %}`**: la celda de acciones (Editar/Eliminar) se extrajo a
+  `partials/_acciones.html` y se reutiliza en los listados de `semana3`.
+- **Seguridad**: se verificó que Django escapa automáticamente valores con `<script>`
+  ingresados en los formularios existentes (auto-escape), sin necesidad de protección
+  adicional a la que ya ofrecía el Admin.
+
 ## 📚 Documentación y publicación del proyecto
 
 En este paso final se generó el archivo `requirements.txt` para congelar las dependencias
