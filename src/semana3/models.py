@@ -15,6 +15,8 @@ Estructura: 5 entidades independientes + 5 relacionadas por ForeignKey.
 La clave primaria `id` NO se escribe: Django la agrega sola (autoincremental).
 """
 
+from datetime import date     # para la regla de negocio "cumpleaños del mes actual"
+
 from django.db import models  # trae models.Model, los tipos de campo y TextChoices
 
 
@@ -192,8 +194,28 @@ class Grado(models.Model):
         return f"{self.nombre_grado} - {self.nivel.nombre_nivel}"   # "1ro de Primaria - Primaria"
 
 
+# ---------------------------------------------------------------------------
+# QuerySet personalizado (Semana 7, Ejercicio 7)
+# ---------------------------------------------------------------------------
+# Agrupa reglas de negocio que se repetirían como .filter(...) en varias Views.
+# Al ser métodos de QuerySet, se pueden ENCADENAR entre sí:
+#   Estudiante.objects.activos().cumpleanios_este_mes()
+
+class EstudianteQuerySet(models.QuerySet):
+    def activos(self):
+        return self.filter(estado=EstadoEstudiante.ACTIVO)
+
+    def cumpleanios_este_mes(self):
+        return self.filter(fecha_nacimiento__month=date.today().month)
+
+
 class Estudiante(models.Model):
     """Expediente del alumno, vinculado a su apoderado."""
+
+    # as_manager(): convierte el QuerySet de arriba en el manager por
+    # defecto, así que Estudiante.objects ya sabe usar .activos() y
+    # .cumpleanios_este_mes() además de .filter(), .all(), etc.
+    objects = EstudianteQuerySet.as_manager()
 
     codigo_alumno = models.CharField(max_length=20, unique=True)   # código interno del colegio
     num_documento = models.CharField(max_length=15, unique=True)   # DNI del alumno

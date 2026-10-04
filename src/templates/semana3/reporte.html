@@ -11,6 +11,13 @@
         {{ total_puntos|floatformat:2 }}
     </p>
 </div>
+{# Ejercicio 7: QuerySet personalizado (EstudianteQuerySet), métodos encadenados #}
+<div class="form-card detail-card">
+    <p><strong>Estudiantes activos:</strong> {{ estudiantes_activos }}</p>
+    <p><strong>Cumpleañeros de este mes (entre los activos):</strong>
+        {% for estudiante in cumpleanieros %}{{ estudiante.nombres }} {{ estudiante.apellidos }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="empty-state">Ninguno</span>{% endfor %}
+    </p>
+</div>
 
 {# Ejercicio 5 (parte 1): annotate() — un valor calculado por cada curso #}
 <h3>Estudiantes inscritos por curso</h3>
@@ -26,7 +33,6 @@
         </tbody>
     </table>
 </div>
-
 {# Ejercicio 5 (parte 2): values().annotate() — agrupado por estado #}
 <h3>Inscripciones por estado</h3>
 <div class="table-wrap">

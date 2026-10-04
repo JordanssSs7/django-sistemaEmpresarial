@@ -587,7 +587,9 @@ def curso_inscribir(request):
 
     context = {
         "cursos": Curso.objects.all(),
-        "estudiantes": Estudiante.objects.all(),
+        # Ejercicio 7: regla de negocio reutilizada en vez de repetir
+        # .filter(estado=EstadoEstudiante.ACTIVO) -> solo activos pueden inscribirse.
+        "estudiantes": Estudiante.objects.activos(),
     }
     return render(request, "semana3/curso_inscribir.html", context)
 
@@ -612,10 +614,18 @@ def reporte(request):
     for fila in por_estado:
         fila["estado_label"] = EstadoCursoEstudiante(fila["estado"]).label
 
+    # Ejercicio 7: los dos métodos del QuerySet personalizado, encadenados.
+    # Reutiliza la misma regla ".activos()" que usa curso_inscribir, y la
+    # combina con ".cumpleanios_este_mes()" sin repetir ningún .filter() nuevo.
+    estudiantes_activos = Estudiante.objects.activos().count()
+    cumpleanieros = Estudiante.objects.activos().cumpleanios_este_mes()
+
     context = {
         "total_puntos": total_puntos,
         "cursos": cursos,
         "por_estado": por_estado,
+        "estudiantes_activos": estudiantes_activos,
+        "cumpleanieros": cumpleanieros,
     }
     return render(request, "semana3/reporte.html", context)
 
