@@ -23,7 +23,7 @@ from decimal import Decimal    # aritmética exacta de dinero (float da errores 
 
 from django.contrib import messages                     # avisos "flash": se ven en la página siguiente
 from django.db import transaction, IntegrityError       # Semana 7: operación atómica entre varios modelos
-from django.db.models import F, Q                       # F() descuenta en la BD sin traer el dato a Python
+from django.db.models import Count, F, Q, Sum            # F() descuenta en la BD; Count/Sum son funciones de aggregate()
 from django.db.models.deletion import ProtectedError    # excepción al borrar un objeto con on_delete=PROTECT
 from django.shortcuts import get_object_or_404, redirect, render
 #   render(request, plantilla, contexto) -> combina HTML + datos y devuelve la respuesta
@@ -49,6 +49,7 @@ from .models import (
     Apoderado,
     Curso,
     CursoEstudiante,
+    EstadoCursoEstudiante,
     EstadoEstudiante,
     EstadoMatricula,
     EstadoPago,
@@ -589,6 +590,34 @@ def curso_inscribir(request):
         "estudiantes": Estudiante.objects.all(),
     }
     return render(request, "semana3/curso_inscribir.html", context)
+
+
+def reporte(request):
+    """Semana 7, Ejercicio 6: junta los cálculos de los Ejercicios 4 y 5
+    en una sola página."""
+    # Ejercicio 4: aggregate() -> un solo diccionario con el total global.
+    total_puntos = CursoEstudiante.objects.filter(nota_final__isnull=False).aggregate(
+        total=Sum(F("nota_final") * F("curso__creditos"))
+    )["total"] or 0
+
+    # Ejercicio 5 (parte 1): annotate() -> un valor calculado POR CADA curso.
+    cursos = Curso.objects.annotate(
+        num_inscritos=Count("inscripciones_curso")
+    ).order_by("-num_inscritos")
+
+    # Ejercicio 5 (parte 2): values().annotate() -> agrupado por estado.
+    por_estado = list(
+        CursoEstudiante.objects.values("estado").annotate(total=Count("id")).order_by("-total")
+    )
+    for fila in por_estado:
+        fila["estado_label"] = EstadoCursoEstudiante(fila["estado"]).label
+
+    context = {
+        "total_puntos": total_puntos,
+        "cursos": cursos,
+        "por_estado": por_estado,
+    }
+    return render(request, "semana3/reporte.html", context)
 
 
 # ---------------------------------------------------------------------------

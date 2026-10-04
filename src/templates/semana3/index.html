@@ -105,5 +105,8 @@
         <a href="{% url 'semana3:curso_list' %}"><span class="section-icon"><i class="bi bi-book-fill"></i></span>Cursos</a> <small class="empty-state">revisa los estudiantes inscritos y sus notas</small>
         <a href="{% url 'semana3:curso_inscribir' %}" class="btn btn-primary btn-sm">+ Inscribir</a>
     </div>
+    <div class="workflow-item">
+        <a href="{% url 'semana3:reporte' %}"><span class="section-icon"><i class="bi bi-bar-chart-line-fill"></i></span>Reporte</a> <small class="empty-state">totales e inscripciones por curso y por estado</small>
+    </div>
 </div>
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends "semana3/_base.html" %}
+
+{% block title %}Reporte{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-bar-chart-line-fill"></i> Reporte</h2>
+
+{# Ejercicio 4: resultado de aggregate() — un solo total, con floatformat aplicado #}
+<div class="form-card detail-card">
+    <p><strong>Total de puntos académicos</strong> (nota_final × créditos, sumado con aggregate()):
+        {{ total_puntos|floatformat:2 }}
+    </p>
+</div>
+
+{# Ejercicio 5 (parte 1): annotate() — un valor calculado por cada curso #}
+<h3>Estudiantes inscritos por curso</h3>
+<div class="table-wrap">
+    <table class="citas">
+        <thead><tr><th>Curso</th><th>Estudiantes inscritos</th></tr></thead>
+        <tbody>
+            {% for curso in cursos %}
+            <tr><td>{{ curso.nombre }}</td><td>{{ curso.num_inscritos }}</td></tr>
+            {% empty %}
+            <tr><td colspan="2" class="empty-state">Sin registros.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Ejercicio 5 (parte 2): values().annotate() — agrupado por estado #}
+<h3>Inscripciones por estado</h3>
+<div class="table-wrap">
+    <table class="citas">
+        <thead><tr><th>Estado</th><th>Cantidad</th></tr></thead>
+        <tbody>
+            {% for fila in por_estado %}
+            <tr><td>{{ fila.estado_label }}</td><td>{{ fila.total }}</td></tr>
+            {% empty %}
+            <tr><td colspan="2" class="empty-state">Sin registros.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
