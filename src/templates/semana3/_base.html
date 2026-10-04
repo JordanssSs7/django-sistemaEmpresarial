@@ -1,3 +1,4 @@
+{# Ejercicio 3: esta app hereda de base.html y solo define sus propios bloques #}
 {% extends "base.html" %}
 {% load static %}
 
@@ -7,6 +8,7 @@
 
 {% block body_class %}bg-escolar{% endblock %}
 
+{# Menú propio de esta app: sobrescribe el bloque "nav" vacío de base.html #}
 {% block nav %}
 <a href="{% url 'semana3:index' %}">Inicio</a>
 <a href="{% url 'semana3:estudiante_list' %}">Estudiantes</a>

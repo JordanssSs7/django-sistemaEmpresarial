@@ -22,7 +22,8 @@ from datetime import date      # para construir fechas: date(2026, 3, 1)
 from decimal import Decimal    # aritmética exacta de dinero (float da errores de redondeo)
 
 from django.contrib import messages                     # avisos "flash": se ven en la página siguiente
-from django.db.models import Q                          # permite combinar condiciones con OR en filter()
+from django.db import transaction, IntegrityError       # Semana 7: operación atómica entre varios modelos
+from django.db.models import F, Q                       # F() descuenta en la BD sin traer el dato a Python
 from django.db.models.deletion import ProtectedError    # excepción al borrar un objeto con on_delete=PROTECT
 from django.shortcuts import get_object_or_404, redirect, render
 #   render(request, plantilla, contexto) -> combina HTML + datos y devuelve la respuesta
@@ -47,6 +48,7 @@ from .models import (
     AnioLectivo,
     Apoderado,
     Curso,
+    CursoEstudiante,
     EstadoEstudiante,
     EstadoMatricula,
     EstadoPago,
@@ -553,6 +555,40 @@ def curso_list(request):
     """
     cursos = Curso.objects.prefetch_related("inscripciones_curso__estudiante")
     return render(request, "semana3/curso_list.html", {"cursos": cursos})
+
+
+def curso_inscribir(request):
+    """Semana 7, Ejercicio 3: operación atómica sobre DOS modelos (Curso y
+    CursoEstudiante). Si falla cualquiera de los dos pasos, transaction.atomic()
+    deshace TODO (no queda ni el cupo descontado ni la inscripción a medias).
+    """
+    if request.method == "POST":
+        estudiante_id = request.POST.get("estudiante")
+        curso_id = request.POST.get("curso")
+        try:
+            with transaction.atomic():
+                # F("cupos_disponibles") - 1: el descuento lo hace la base de
+                # datos en la misma consulta, no se trae el número a Python.
+                # El filtro cupos_disponibles__gt=0 evita que quede en negativo.
+                filas_actualizadas = Curso.objects.filter(
+                    pk=curso_id, cupos_disponibles__gt=0
+                ).update(cupos_disponibles=F("cupos_disponibles") - 1)
+                if not filas_actualizadas:
+                    raise ValueError("Ese curso ya no tiene cupos disponibles.")
+                CursoEstudiante.objects.create(estudiante_id=estudiante_id, curso_id=curso_id)
+        except ValueError as e:
+            messages.error(request, str(e))
+        except IntegrityError:
+            messages.error(request, "Ese estudiante ya está inscrito en ese curso.")
+        else:
+            messages.success(request, "Inscripción registrada: se descontó un cupo del curso.")
+        return redirect("semana3:curso_inscribir")   # Post/Redirect/Get
+
+    context = {
+        "cursos": Curso.objects.all(),
+        "estudiantes": Estudiante.objects.all(),
+    }
+    return render(request, "semana3/curso_inscribir.html", context)
 
 
 # ---------------------------------------------------------------------------

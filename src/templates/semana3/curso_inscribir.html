@@ -1,0 +1,47 @@
+{% extends "semana3/_base.html" %}
+
+{% block title %}Inscribir estudiante en curso{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-journal-plus"></i> Inscribir estudiante en curso</h2>
+
+{# Ejercicio 3: formulario que dispara una operación atómica sobre dos modelos (Curso y CursoEstudiante) #}
+<form class="form-card" method="post" novalidate>
+    {% csrf_token %}
+    <p>
+        <label for="id_estudiante">Estudiante</label>
+        <select name="estudiante" id="id_estudiante" required>
+            {% for estudiante in estudiantes %}
+            <option value="{{ estudiante.id }}">{{ estudiante.nombres }} {{ estudiante.apellidos }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <p>
+        <label for="id_curso">Curso</label>
+        <select name="curso" id="id_curso" required>
+            {% for curso in cursos %}
+            <option value="{{ curso.id }}">{{ curso.nombre }} — {{ curso.cupos_disponibles }} cupos disponibles</option>
+            {% endfor %}
+        </select>
+    </p>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Inscribir</button>
+        <a href="{% url 'semana3:curso_list' %}" class="btn btn-secondary">Volver a cursos</a>
+    </div>
+</form>
+
+<h3>Cupos actuales</h3>
+<div class="table-wrap">
+    <table class="citas">
+        <thead><tr><th>Curso</th><th>Cupos disponibles</th></tr></thead>
+        <tbody>
+            {% for curso in cursos %}
+            <tr>
+                <td>{{ curso.nombre }}</td>
+                <td>{{ curso.cupos_disponibles }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

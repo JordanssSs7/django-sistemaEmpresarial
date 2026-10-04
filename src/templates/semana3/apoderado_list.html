@@ -21,6 +21,7 @@
             <td>{{ apoderado.apellidos }}</td>
             <td>{{ apoderado.telefono|default:"—" }}</td>
             <td>{{ apoderado.correo|default:"—" }}</td>
+            {# Se identificó que la celda "Editar/Eliminar#}
             {% include "semana3/partials/_acciones.html" with prefijo="apoderado" obj_id=apoderado.id %}
         </tr>
         {% empty %}

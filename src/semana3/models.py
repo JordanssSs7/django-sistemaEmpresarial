@@ -321,6 +321,8 @@ class Curso(models.Model):
 
     nombre = models.CharField(max_length=100, unique=True)
     creditos = models.PositiveSmallIntegerField(default=1)
+    # Campo entero que se descuenta en cada inscripción (Semana 7: ORM avanzado con F()).
+    cupos_disponibles = models.PositiveIntegerField(default=30)
 
     class Meta:
         verbose_name = "Curso"
