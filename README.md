@@ -187,6 +187,24 @@ investigación propia, sin cambiar su comportamiento ni sus URLs:
   ingresados en los formularios existentes (auto-escape), sin necesidad de protección
   adicional a la que ya ofrecía el Admin.
 
+## ⚙️ Semana 7 — ORM avanzado (`semana3`)
+
+Se agregaron técnicas de ORM avanzado sobre las entidades de `semana3` (Estudiante, Curso,
+CursoEstudiante), sin romper el CRUD existente:
+
+- **Transacción atómica**: la vista `curso_inscribir` registra una inscripción modificando dos
+  modelos (`Curso` y `CursoEstudiante`) dentro de `transaction.atomic()`, descontando el campo
+  `cupos_disponibles` con `F()`. Si no hay cupos, la operación se revierte por completo.
+- **Reportes**: la vista `reporte` muestra un total calculado con `aggregate()` (puntos
+  académicos), un valor por objeto con `annotate()` (estudiantes inscritos por curso) y un
+  agrupado con `values().annotate()` (inscripciones por estado).
+- **QuerySet personalizado**: `EstudianteQuerySet` agrega los métodos encadenables
+  `activos()` y `cumpleanios_este_mes()`, asignado como manager por defecto con
+  `as_manager()` y reutilizado en las vistas `curso_inscribir` y `reporte`.
+- **Optimización N+1**: se midió con `connection.queries` el número de consultas de un
+  listado antes y después de aplicar `select_related()` (6 → 1 consulta) y
+  `prefetch_related()` (14 → 3 consultas).
+
 ## 📚 Documentación y publicación del proyecto
 
 En este paso final se generó el archivo `requirements.txt` para congelar las dependencias
