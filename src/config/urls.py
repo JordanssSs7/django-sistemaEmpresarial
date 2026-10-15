@@ -25,4 +25,5 @@ urlpatterns = [
     path('semana1/', include('semana1.urls')),
     path('semana2/', include('semana2.urls')),
     path('semana3/', include('semana3.urls')),
+    path('api/', include('semana3.api_urls')),  # Semana 8: API REST
 ]

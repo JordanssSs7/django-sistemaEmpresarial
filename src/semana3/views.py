@@ -561,7 +561,7 @@ def curso_list(request):
 def curso_inscribir(request):
     """Semana 7, Ejercicio 3: operación atómica sobre DOS modelos (Curso y
     CursoEstudiante). Si falla cualquiera de los dos pasos, transaction.atomic()
-    deshace TODO (no queda ni el cupo descontado ni la inscripción a medias).
+    deshace TODO (no queda ni el cupo descontado ni la inscripción a medias)
     """
     if request.method == "POST":
         estudiante_id = request.POST.get("estudiante")
@@ -596,7 +596,7 @@ def curso_inscribir(request):
 
 def reporte(request):
     """Semana 7, Ejercicio 6: junta los cálculos de los Ejercicios 4 y 5
-    en una sola página."""
+    en una sola página"""
     # Ejercicio 4: aggregate() -> un solo diccionario con el total global.
     total_puntos = CursoEstudiante.objects.filter(nota_final__isnull=False).aggregate(
         total=Sum(F("nota_final") * F("curso__creditos"))

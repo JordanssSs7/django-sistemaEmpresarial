@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',   # Semana 8: expone los modelos como API REST (serializers, ViewSets, routers)
     'semana1',
     'semana2',
     'semana3',

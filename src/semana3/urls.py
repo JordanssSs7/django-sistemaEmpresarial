@@ -77,8 +77,8 @@ urlpatterns = [
     # Semana 4, Ejercicio 6: consultar relaciones (select_related / prefetch_related)
     path("estudiantes/<int:pk>/", views.estudiante_detalle, name="estudiante_detalle"),
     path("cursos/", views.curso_list, name="curso_list"),
-    path("cursos/inscribir/", views.curso_inscribir, name="curso_inscribir"),  # Semana 7, Ejercicio 3
-    path("reporte/", views.reporte, name="reporte"),  # Semana 7, Ejercicio 6
+    path("cursos/inscribir/", views.curso_inscribir, name="curso_inscribir"),  # Semana 7, Ejercicio 3.
+    path("reporte/", views.reporte, name="reporte"),  # Semana 7, Ejercicio 6.
 
     # --- Matrícula ---  (FK -> Estudiante, AnioLectivo, Grado)
     path("matriculas/", views.matricula_list, name="matricula_list"),            # acepta ?anio= ?estado=
