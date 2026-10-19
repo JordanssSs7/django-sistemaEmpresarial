@@ -212,3 +212,18 @@ instaladas en el entorno virtual. Luego se redactó este `README.md` detallando 
 tecnologías usadas, la estructura del proyecto y los pasos de instalación y ejecución.
 Finalmente, se inicializó el repositorio local con Git y se subió todo el código fuente a un
 repositorio público en GitHub.
+
+## ⚛️ Semana 9 — Frontend con React y Vite
+
+Se creó la carpeta `frontend/` (React + Vite) dentro de este repositorio. Muestra, con datos
+escritos a mano que imitan las respuestas de la API de la Semana 8, listas con `map()` y `key`,
+renderizado condicional (ternario y `&&`), relaciones 1:N con listas anidadas y estilos con
+`className`. Para ejecutarlo:
+
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:5173/
+```
+
+`node_modules/` y `dist/` no se versionan. Más detalle en [`frontend/README.md`](frontend/README.md).
