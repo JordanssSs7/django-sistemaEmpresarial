@@ -27,3 +27,7 @@ media/
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Frontend (React + Vite): dependencias y build, no se versionan
+frontend/node_modules/
+frontend/dist/
