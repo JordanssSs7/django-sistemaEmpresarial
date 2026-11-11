@@ -199,7 +199,7 @@ class Grado(models.Model):
 # ---------------------------------------------------------------------------
 # Agrupa reglas de negocio que se repetirían como .filter(...) en varias Views.
 # Al ser métodos de QuerySet, se pueden ENCADENAR entre sí:
-#   Estudiante.objects.activos().cumpleanios_este_mes()
+#   Estudiante.objects.activos().cumpleanios_este_mes().
 
 class EstudianteQuerySet(models.QuerySet):
     def activos(self):
@@ -343,7 +343,7 @@ class Curso(models.Model):
 
     nombre = models.CharField(max_length=100, unique=True)
     creditos = models.PositiveSmallIntegerField(default=1)
-    # Campo entero que se descuenta en cada inscripción (Semana 7: ORM avanzado con F()).
+    # Campo entero que se descuenta en cada inscripción (Semana 7: ORM avanzado con F())
     cupos_disponibles = models.PositiveIntegerField(default=30)
 
     class Meta:

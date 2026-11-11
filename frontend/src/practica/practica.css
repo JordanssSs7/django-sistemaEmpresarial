@@ -1,0 +1,42 @@
+/* Estilos de la Parte 1 (Semana 11). Reutiliza las variables y clases de App.css. */
+.practica-layout {
+  display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; align-items: start;
+}
+@media (max-width: 760px) {
+  .practica-layout { grid-template-columns: 1fr; }
+}
+
+.buscador {
+  width: 100%; padding: 0.6rem 0.9rem; margin-bottom: 1rem;
+  border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;
+  background: var(--surface); box-shadow: var(--shadow); font-family: inherit;
+}
+.buscador:focus { outline: none; border-color: var(--accent); }
+
+.btn {
+  display: inline-block; padding: 0.45rem 0.9rem; border-radius: 8px;
+  font-size: 0.88rem; border: none; cursor: pointer; font-family: inherit;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primario { background: var(--accent); color: white; margin-top: 0.7rem; width: 100%; }
+.btn-secundario { background: var(--surface); color: #374151; border: 1px solid var(--border); width: 100%; }
+.btn-quitar { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 0.25rem 0.6rem; font-size: 0.8rem; }
+
+.carrito {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1rem 1.25rem; box-shadow: var(--shadow); position: sticky; top: 1rem;
+}
+.practica-layout h2 { margin-top: 0; }
+.carrito ul { list-style: none; padding: 0; margin: 0 0 0.8rem; }
+.carrito li {
+  display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;
+  padding: 0.45rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem;
+}
+.carrito li small { display: block; color: var(--text-muted); }
+.unidades { margin: 0.3rem 0; color: var(--text-muted); font-size: 0.9rem; }
+.total { margin: 0.3rem 0 0.9rem; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+
+.aviso {
+  background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
+  border-radius: 8px; padding: 0.6rem 1rem; margin: 0 0 1rem; font-weight: 600;
+}
