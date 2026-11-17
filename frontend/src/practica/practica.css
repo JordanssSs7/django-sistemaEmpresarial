@@ -40,3 +40,28 @@
   background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;
   border-radius: 8px; padding: 0.6rem 1rem; margin: 0 0 1rem; font-weight: 600;
 }
+
+/* Semana 12: formulario, tabla y mensajes de error de la API */
+.form-practica {
+  display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: end;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1rem 1.25rem; box-shadow: var(--shadow);
+}
+.form-practica label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+.form-practica input {
+  padding: 0.5rem 0.7rem; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 0.95rem; font-family: inherit;
+}
+.form-practica .btn-primario { width: auto; margin-top: 0; }
+.error-api {
+  background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;
+  border-radius: 8px; padding: 0.6rem 1rem; margin: 0.8rem 0; font-weight: 600;
+}
+.tabla-practica {
+  width: 100%; border-collapse: collapse; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow);
+}
+.tabla-practica th, .tabla-practica td { padding: 0.6rem 0.9rem; text-align: left; border-bottom: 1px solid var(--border); }
+.tabla-practica th { background: #f8fafc; color: var(--primary); }
+.tabla-practica .acciones { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.tabla-practica .btn-secundario { width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem; }

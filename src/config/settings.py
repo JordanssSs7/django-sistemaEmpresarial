@@ -38,12 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',   # Semana 8: expone los modelos como API REST (serializers, ViewSets, routers)
+    'corsheaders',      # Semana 12: permite que React (otro origen) consuma la API
     'semana1',
     'semana2',
     'semana3',
 ]
 
 MIDDLEWARE = [
+    # Semana 12: va en la parte alta, antes de CommonMiddleware, para agregar
+    # las cabeceras CORS a todas las respuestas.
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +58,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+# Semana 12: orígenes que pueden pedir datos a la API desde el navegador.
+# Solo el front-end de React (Vite) en desarrollo.
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
 
 TEMPLATES = [
     {
