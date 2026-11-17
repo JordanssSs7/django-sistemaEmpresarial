@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'semana1',
     'semana2',
     'semana3',
+    'catalogo',         # Semana 13: matrícula en línea — grados ofertados, costos y vacantes
+    'pedidos',          # Semana 13: matrícula en línea — solicitudes de matrícula y sus pagos
 ]
 
 MIDDLEWARE = [
